@@ -1,0 +1,2851 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Libertad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+/* ─── THEMES ─────────────────────────────────────────────── */
+:root {
+  --transition-theme: background 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+[data-theme="dark"] {
+  --bg:        #151c28;
+  --bg2:       #1b2438;
+  --surface:   #1f2b3e;
+  --surface2:  #253349;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.13);
+  --gold:      #d4a853;
+  --gold-dim:  rgba(212,168,83,0.12);
+  --gold-glow: rgba(212,168,83,0.28);
+  --text:      #e4ddd4;
+  --text-mid:  rgba(228,221,212,0.65);
+  --text-dim:  rgba(228,221,212,0.38);
+  --green:     #5dba7d;
+  --green-dim: rgba(93,186,125,0.1);
+  --green-border: rgba(93,186,125,0.22);
+  --red:       #e07070;
+  --red-dim:   rgba(192,80,80,0.1);
+  --red-border: rgba(192,80,80,0.22);
+  --calm:      #6b8fb5;
+  --shadow:    0 4px 24px rgba(0,0,0,0.35);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+[data-theme="light"] {
+  --bg:        #f5f0e8;
+  --bg2:       #ede7db;
+  --surface:   #faf7f2;
+  --surface2:  #f0ebe2;
+  --border:    rgba(100,80,50,0.1);
+  --border2:   rgba(100,80,50,0.18);
+  --gold:      #a07830;
+  --gold-dim:  rgba(160,120,48,0.1);
+  --gold-glow: rgba(160,120,48,0.2);
+  --text:      #2d2418;
+  --text-mid:  rgba(45,36,24,0.62);
+  --text-dim:  rgba(45,36,24,0.38);
+  --green:     #3a8a55;
+  --green-dim: rgba(58,138,85,0.08);
+  --green-border: rgba(58,138,85,0.22);
+  --red:       #a84040;
+  --red-dim:   rgba(168,64,64,0.07);
+  --red-border: rgba(168,64,64,0.2);
+  --calm:      #5a7a9e;
+  --shadow:    0 4px 24px rgba(80,60,30,0.12);
+  --shadow-sm: 0 2px 8px rgba(80,60,30,0.08);
+}
+
+/* ─── RESET & BASE ───────────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  transition: var(--transition-theme);
+  overflow-x: hidden;
+}
+
+/* Subtle texture */
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:1000; opacity:0.5;
+}
+
+/* ─── LAYOUT ─────────────────────────────────────────────── */
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding-bottom: 80px;
+}
+
+section {
+  padding: 0 22px;
+  margin-top: 28px;
+}
+
+.section-label {
+  font-size: 9.5px;
+  letter-spacing: 4.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  font-weight: 400;
+}
+
+/* ─── HEADER ─────────────────────────────────────────────── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 22px 0;
+}
+
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 7px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.header-right { display:flex; align-items:center; gap:14px; }
+
+.header-date {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+
+/* Theme toggle */
+.theme-toggle {
+  width: 38px; height: 20px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.4s ease;
+  flex-shrink:0;
+}
+.theme-toggle::after {
+  content: '';
+  position: absolute;
+  left: 3px; top: 50%;
+  transform: translateY(-50%);
+  width: 12px; height: 12px;
+  background: var(--text-dim);
+  border-radius: 50%;
+  transition: all 0.35s ease;
+}
+[data-theme="light"] .theme-toggle::after {
+  left: calc(100% - 15px);
+  background: var(--gold);
+}
+.theme-toggle-icon {
+  position:absolute; inset:0;
+  display:flex; align-items:center;
+  font-size: 8px;
+  pointer-events:none;
+}
+[data-theme="dark"]  .theme-toggle-icon::before { content:'🌙'; margin-left:2px; }
+[data-theme="light"] .theme-toggle-icon::before { content:'☀'; margin-left:20px; font-size:9px; }
+
+/* ─── HERO / STREAK ──────────────────────────────────────── */
+.hero {
+  padding: 36px 22px 20px;
+  text-align: center;
+  position: relative;
+}
+
+.hero-glow {
+  position:absolute; top:0; left:50%;
+  transform:translateX(-50%);
+  width:340px; height:280px;
+  background: radial-gradient(ellipse, var(--gold-glow) 0%, transparent 68%);
+  pointer-events:none;
+  opacity:0.6;
+}
+
+.streak-label {
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  font-weight: 400;
+}
+
+.streak-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(96px, 26vw, 128px);
+  font-weight: 300;
+  line-height: 1;
+  color: var(--gold);
+  text-shadow: 0 0 60px var(--gold-glow);
+  display: inline-block;
+  transition: all 0.4s ease;
+}
+
+.streak-number.pop {
+  animation: numPop 0.55s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes numPop {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.08); text-shadow: 0 0 100px var(--gold-glow); }
+  100% { transform: scale(1); }
+}
+
+.streak-unit {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.55;
+  margin-top: 4px;
+}
+
+.streak-science {
+  margin: 18px auto 0;
+  max-width: 320px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--text-mid);
+  line-height: 1.65;
+}
+
+/* ─── NEXT MILESTONE PROGRESS ─────────────────────────────── */
+.progress-section {
+  padding: 0 22px;
+  margin-top: 20px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+
+.progress-next { font-size: 11px; color: var(--text-dim); }
+.progress-days { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gold); }
+
+.track {
+  height: 2px;
+  background: var(--border2);
+  border-radius: 2px;
+  position: relative;
+  overflow: visible;
+}
+
+.track-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+  border-radius: 2px;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+.track-fill::after {
+  content:'';
+  position:absolute; right:-1px; top:50%;
+  transform:translateY(-50%);
+  width:7px; height:7px;
+  background:var(--gold);
+  border-radius:50%;
+  box-shadow:0 0 8px var(--gold-glow);
+}
+
+/* ─── CALENDAR HEATMAP ────────────────────────────────────── */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+  position: relative;
+}
+
+.cal-day.clean {
+  background: var(--gold-dim);
+  border-color: rgba(212,168,83,0.3);
+}
+
+.cal-day.today {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+
+.cal-day.relapse {
+  background: var(--red-dim);
+  border-color: var(--red-border);
+}
+
+.cal-labels {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+}
+.cal-lbl {
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+
+/* ─── MAIN BUTTONS ────────────────────────────────────────── */
+.actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 22px;
+  margin-top: 28px;
+}
+
+.btn-checkin, .btn-emergency {
+  padding: 16px 12px;
+  border-radius: 3px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: 1px solid;
+  font-weight: 400;
+}
+
+.btn-checkin {
+  background: var(--green-dim);
+  border-color: var(--green-border);
+  color: var(--green);
+}
+.btn-checkin:hover:not(:disabled) {
+  background: rgba(93,186,125,0.18);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.btn-checkin:disabled { opacity:0.38; cursor:default; }
+
+.btn-emergency {
+  background: var(--red-dim);
+  border-color: var(--red-border);
+  color: var(--red);
+}
+.btn-emergency:hover {
+  background: rgba(192,80,80,0.17);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.checkin-note {
+  text-align:center;
+  margin-top:8px;
+  font-size:11px;
+  color:var(--text-dim);
+  letter-spacing:0.5px;
+}
+
+/* ─── STATS GRID ──────────────────────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px 14px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-theme);
+}
+
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 300;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.stat-lbl {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ─── MILESTONES ──────────────────────────────────────────── */
+.milestone-list { display:flex; flex-direction:column; }
+
+.milestone-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+  transition: all 0.4s ease;
+}
+
+.ms-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--border2);
+  margin-top: 5px;
+  flex-shrink: 0;
+  transition: all 0.5s ease;
+}
+.milestone-item.reached .ms-dot {
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 0 8px var(--gold-glow);
+}
+.milestone-item.next .ms-dot {
+  border-color: var(--gold);
+  animation: dotPulse 2.2s ease infinite;
+}
+@keyframes dotPulse {
+  0%,100% { opacity:0.5; transform:scale(1); }
+  50%      { opacity:1;   transform:scale(1.3); box-shadow:0 0 6px var(--gold-glow); }
+}
+
+.ms-content { flex:1; }
+
+.ms-day {
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  margin-bottom: 3px;
+}
+.milestone-item.reached .ms-day { color: var(--gold); }
+
+.ms-title {
+  font-size: 12.5px;
+  color: var(--text-mid);
+  line-height: 1.5;
+}
+.milestone-item.reached .ms-title { color: var(--text); }
+
+.ms-check { font-size: 12px; opacity:0; transition:opacity 0.4s; }
+.milestone-item.reached .ms-check { opacity:1; color:var(--gold); }
+
+/* ─── REASONS ─────────────────────────────────────────────── */
+.reasons-list { display:flex; flex-direction:column; gap:7px; margin-bottom:10px; }
+
+.reason-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 13px;
+  color: var(--text-mid);
+  transition: var(--transition-theme);
+}
+.reason-bullet { color: var(--gold); font-size:10px; flex-shrink:0; }
+.reason-text { flex:1; }
+
+.reason-del {
+  background:none; border:none;
+  color:var(--text-dim);
+  cursor:pointer; font-size:16px;
+  opacity:0.35; transition:opacity 0.2s;
+  line-height:1; padding:2px;
+}
+.reason-del:hover { opacity:1; color:var(--red); }
+
+.reason-input-row { display:flex; gap:8px; }
+
+.reason-input {
+  flex:1;
+  padding: 11px 13px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s, var(--transition-theme);
+}
+.reason-input:focus { border-color: var(--border2); }
+.reason-input::placeholder { color: var(--text-dim); }
+
+.reason-add-btn {
+  padding: 11px 18px;
+  background: var(--gold-dim);
+  border: 1px solid rgba(212,168,83,0.2);
+  color: var(--gold);
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s;
+  line-height:1;
+}
+.reason-add-btn:hover { background: rgba(212,168,83,0.2); }
+
+/* ─── URGE LOG ────────────────────────────────────────────── */
+.urge-log { display:flex; flex-direction:column; gap:6px; }
+
+.urge-entry {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:3px;
+  font-size:12px;
+  color:var(--text-mid);
+  transition:var(--transition-theme);
+}
+.urge-time {
+  font-family:'DM Mono',monospace;
+  font-size:9.5px;
+  color:var(--text-dim);
+  white-space:nowrap;
+}
+.urge-tag {
+  padding:2px 7px;
+  border-radius:10px;
+  background:var(--red-dim);
+  border:1px solid var(--red-border);
+  color:var(--red);
+  font-size:10px;
+  letter-spacing:0.5px;
+}
+.urge-outcome {
+  padding:2px 7px;
+  border-radius:10px;
+  background:var(--green-dim);
+  border:1px solid var(--green-border);
+  color:var(--green);
+  font-size:10px;
+}
+
+/* ─── RESET ───────────────────────────────────────────────── */
+.reset-section { text-align:center; margin-top:28px; padding:0 22px; }
+
+.reset-link {
+  font-size:11px; color:var(--text-dim);
+  letter-spacing:1px; cursor:pointer;
+  text-decoration:underline; text-underline-offset:3px;
+  background:none; border:none;
+  font-family:'DM Sans',sans-serif;
+  transition:color 0.2s;
+}
+.reset-link:hover { color:var(--red); }
+
+.reset-box {
+  display:none;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:20px;
+  margin-top:12px;
+  text-align:left;
+  transition:var(--transition-theme);
+}
+.reset-box.open { display:block; }
+
+.reset-quote {
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:15px;
+  color:var(--text-mid);
+  line-height:1.65;
+  margin-bottom:16px;
+}
+
+.reset-actions { display:flex; gap:8px; }
+
+.reset-yes, .reset-no {
+  flex:1; padding:11px;
+  font-family:'DM Sans',sans-serif;
+  font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; cursor:pointer;
+  border-radius:3px; transition:all 0.2s;
+}
+.reset-yes {
+  background:var(--red-dim);
+  border:1px solid var(--red-border);
+  color:var(--red);
+}
+.reset-yes:hover { background:rgba(192,80,80,0.18); }
+.reset-no {
+  background:transparent;
+  border:1px solid var(--border2);
+  color:var(--text-dim);
+}
+.reset-no:hover { color:var(--text); }
+
+/* ─── DIVIDER ─────────────────────────────────────────────── */
+hr {
+  border:none;
+  border-top:1px solid var(--border);
+  margin:28px 22px 0;
+}
+
+/* ─── TOAST ───────────────────────────────────────────────── */
+.toast {
+  position:fixed; bottom:28px; left:50%;
+  transform: translateX(-50%) translateY(60px);
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  border-radius:3px;
+  padding:11px 20px;
+  font-size:12px; letter-spacing:0.5px;
+  color:var(--text-mid);
+  z-index:9999;
+  transition:transform 0.38s cubic-bezier(0.34,1.2,0.64,1);
+  white-space:nowrap;
+  box-shadow:var(--shadow);
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+/* ─── EMERGENCY OVERLAY ───────────────────────────────────── */
+.e-overlay {
+  display:none; position:fixed; inset:0;
+  background:var(--bg);
+  z-index:800;
+  overflow-y:auto;
+  animation: fadeUp 0.35s ease;
+}
+.e-overlay.open { display:block; }
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.e-inner {
+  max-width:440px; margin:0 auto;
+  padding:36px 24px 80px;
+  display:flex; flex-direction:column; align-items:center;
+  text-align:center;
+}
+
+.e-close {
+  position:fixed; top:20px; right:20px;
+  width:36px; height:36px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; color:var(--text-dim);
+  cursor:pointer;
+  transition:all 0.2s;
+  z-index:10;
+}
+.e-close:hover { color:var(--text); border-color:var(--border2); }
+
+/* Emergency phases */
+.e-phase { display:none; width:100%; }
+.e-phase.active { display:flex; flex-direction:column; align-items:center; }
+
+.e-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:38px; font-weight:300;
+  color:var(--text); margin-bottom:6px;
+}
+.e-sub {
+  font-size:11px; letter-spacing:3.5px;
+  text-transform:uppercase; color:var(--text-dim);
+  margin-bottom:36px;
+}
+
+/* Breathing */
+.breath-wrap {
+  position:relative;
+  width:150px; height:150px;
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:14px;
+}
+.breath-ring {
+  position:absolute; inset:0;
+  border-radius:50%;
+  border:1.5px solid rgba(212,168,83,0.2);
+  transform:scale(1);
+  transition:transform 4s ease, border-color 4s ease, box-shadow 4s ease;
+}
+.breath-ring.ring2 { inset:-12px; border-color:rgba(212,168,83,0.1); }
+.breath-ring.inhale {
+  transform:scale(1.18);
+  border-color:rgba(212,168,83,0.55);
+  box-shadow:0 0 30px rgba(212,168,83,0.15);
+}
+.breath-ring.ring2.inhale { transform:scale(1.12); }
+
+.breath-label {
+  font-family:'Cormorant Garamond',serif;
+  font-size:13px; letter-spacing:2px;
+  color:var(--gold); text-transform:uppercase;
+  z-index:1;
+}
+
+.breath-guide {
+  font-size:11px; letter-spacing:2.5px;
+  text-transform:uppercase; color:var(--text-dim);
+  margin-bottom:10px; height:18px;
+}
+
+.breath-counter {
+  font-family:'DM Mono',monospace;
+  font-size:28px; font-weight:300;
+  color:var(--text-dim); margin-bottom:32px;
+}
+
+/* Timer */
+.urge-timer {
+  font-family:'DM Mono',monospace;
+  font-size:56px; font-weight:300;
+  color:var(--gold); line-height:1;
+  margin-bottom:6px;
+}
+.urge-timer-sub {
+  font-size:10px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--text-dim);
+  margin-bottom:36px;
+}
+
+/* Action list */
+.e-actions {
+  width:100%; list-style:none;
+  margin-bottom:28px;
+  border-top:1px solid var(--border);
+}
+.e-actions li {
+  display:flex; align-items:center; gap:14px;
+  padding:14px 4px;
+  border-bottom:1px solid var(--border);
+  font-size:14px; color:var(--text-mid);
+  cursor:pointer;
+  transition:all 0.2s;
+  text-align:left;
+}
+.e-actions li:hover { color:var(--text); padding-left:10px; }
+.e-actions li .ic { font-size:18px; width:24px; text-align:center; }
+
+/* Grounding */
+.grounding-step {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:22px 20px;
+  margin-bottom:14px;
+  width:100%; text-align:left;
+}
+.ground-num {
+  font-family:'Cormorant Garamond',serif;
+  font-size:44px; font-weight:300;
+  color:var(--gold); opacity:0.6;
+  line-height:1; margin-bottom:4px;
+}
+.ground-sense {
+  font-size:10px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--text-dim);
+  margin-bottom:8px;
+}
+.ground-prompt {
+  font-size:15px; color:var(--text-mid); line-height:1.5;
+}
+
+/* Affirmation */
+.e-affirmation {
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic; font-size:21px;
+  color:var(--text-mid); line-height:1.6;
+  margin-bottom:36px; max-width:320px;
+}
+
+/* Phase nav */
+.phase-nav {
+  display:flex; gap:8px; margin-bottom:36px;
+  width:100%;
+}
+.phase-nav-btn {
+  flex:1; padding:13px 8px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:3px;
+  font-family:'DM Sans',sans-serif;
+  font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--text-dim);
+  cursor:pointer; transition:all 0.2s;
+}
+.phase-nav-btn.active {
+  background:var(--gold-dim);
+  border-color:rgba(212,168,83,0.3);
+  color:var(--gold);
+}
+.phase-nav-btn:hover:not(.active) { color:var(--text); }
+
+/* trigger select */
+.trigger-select {
+  width:100%; margin-bottom:14px;
+}
+.trigger-select-label {
+  font-size:11px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--text-dim);
+  margin-bottom:8px; display:block;
+}
+.trigger-chips {
+  display:flex; flex-wrap:wrap; gap:7px;
+}
+.chip {
+  padding:7px 13px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:20px;
+  font-size:12px; color:var(--text-mid);
+  cursor:pointer; transition:all 0.2s;
+}
+.chip.selected {
+  background:var(--gold-dim);
+  border-color:rgba(212,168,83,0.35);
+  color:var(--gold);
+}
+.chip:hover:not(.selected) { color:var(--text); }
+
+.trigger-done-btn {
+  width:100%; margin-top:18px;
+  padding:14px;
+  background:var(--green-dim);
+  border:1px solid var(--green-border);
+  border-radius:3px;
+  color:var(--green);
+  font-family:'DM Sans',sans-serif;
+  font-size:11px; letter-spacing:2.5px;
+  text-transform:uppercase;
+  cursor:pointer; transition:all 0.2s;
+}
+.trigger-done-btn:hover { background:rgba(93,186,125,0.18); }
+
+/* ─── INTENSITY SLIDER ────────────────────────────────────── */
+.intensity-wrap {
+  width:100%; margin-bottom:28px;
+}
+.intensity-label {
+  font-size:10px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--text-dim);
+  text-align:center; margin-bottom:14px; display:block;
+}
+.intensity-num {
+  font-family:'Cormorant Garamond',serif;
+  font-size:52px; font-weight:300;
+  line-height:1; text-align:center; margin-bottom:12px;
+  transition:color 0.3s;
+}
+.intensity-desc {
+  font-size:12px; color:var(--text-dim);
+  text-align:center; margin-bottom:16px;
+  letter-spacing:0.5px; height:18px;
+  transition:color 0.3s;
+}
+.intensity-slider {
+  -webkit-appearance:none; appearance:none;
+  width:100%; height:3px;
+  border-radius:3px; outline:none; cursor:pointer;
+  background: linear-gradient(90deg, var(--green) 0%, var(--gold) 50%, var(--red) 100%);
+}
+.intensity-slider::-webkit-slider-thumb {
+  -webkit-appearance:none; appearance:none;
+  width:22px; height:22px; border-radius:50%;
+  background:var(--text); cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,0.3);
+  border:2px solid var(--bg);
+  transition:transform 0.15s;
+}
+.intensity-slider::-webkit-slider-thumb:active { transform:scale(1.2); }
+.intensity-ticks {
+  display:flex; justify-content:space-between;
+  margin-top:6px; padding:0 2px;
+}
+.intensity-ticks span {
+  font-family:'DM Mono',monospace;
+  font-size:9px; color:var(--text-dim);
+}
+
+/* ─── RELAPSE OVERLAY ──────────────────────────────────────── */
+.r-overlay {
+  display:none; position:fixed; inset:0;
+  background:var(--bg);
+  z-index:850;
+  overflow-y:auto;
+  animation: fadeUp 0.35s ease;
+}
+.r-overlay.open { display:block; }
+
+.r-inner {
+  max-width:440px; margin:0 auto;
+  padding:36px 24px 80px;
+  display:flex; flex-direction:column; align-items:center;
+  text-align:center;
+}
+
+.r-close {
+  position:fixed; top:20px; right:20px;
+  width:36px; height:36px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; color:var(--text-dim);
+  cursor:pointer; transition:all 0.2s; z-index:10;
+}
+.r-close:hover { color:var(--text); }
+
+.r-phase { display:none; width:100%; }
+.r-phase.active { display:flex; flex-direction:column; align-items:center; }
+
+.r-step-nav {
+  display:flex; gap:6px; margin-bottom:36px; width:100%;
+}
+.r-step-dot {
+  flex:1; height:2px; border-radius:2px;
+  background:var(--border2); transition:background 0.4s;
+}
+.r-step-dot.done { background:var(--gold); }
+.r-step-dot.active { background:var(--gold); opacity:0.5; }
+
+.r-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:34px; font-weight:300;
+  color:var(--text); margin-bottom:8px; line-height:1.2;
+}
+.r-sub {
+  font-size:11px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--text-dim);
+  margin-bottom:28px;
+}
+.r-quote {
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic; font-size:18px;
+  color:var(--text-mid); line-height:1.7;
+  margin-bottom:28px; max-width:340px;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:4px; padding:20px 22px; text-align:left;
+}
+.r-now-title {
+  font-size:10px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--text-dim);
+  margin-bottom:12px; align-self:flex-start;
+}
+.r-protocol {
+  width:100%; list-style:none;
+  border-top:1px solid var(--border);
+  margin-bottom:24px;
+}
+.r-protocol li {
+  display:flex; align-items:center; gap:14px;
+  padding:14px 4px;
+  border-bottom:1px solid var(--border);
+  font-size:14px; color:var(--text-mid);
+  text-align:left;
+}
+.r-protocol li .ic { font-size:18px; width:24px; text-align:center; }
+
+.r-btn-primary {
+  width:100%; padding:15px;
+  background:var(--gold-dim);
+  border:1px solid rgba(212,168,83,0.3);
+  border-radius:3px; color:var(--gold);
+  font-family:'DM Sans',sans-serif;
+  font-size:11px; letter-spacing:2.5px;
+  text-transform:uppercase; cursor:pointer;
+  transition:all 0.2s; margin-bottom:10px;
+}
+.r-btn-primary:hover { background:rgba(212,168,83,0.2); }
+
+.r-btn-secondary {
+  width:100%; padding:13px;
+  background:transparent;
+  border:1px solid var(--border2);
+  border-radius:3px; color:var(--text-dim);
+  font-family:'DM Sans',sans-serif;
+  font-size:11px; letter-spacing:2.5px;
+  text-transform:uppercase; cursor:pointer;
+  transition:all 0.2s;
+}
+.r-btn-secondary:hover { color:var(--text); }
+
+.r-reset-warning {
+  font-size:12px; color:var(--text-dim);
+  margin-top:16px; line-height:1.6;
+}
+
+/* ─── RELAPSE BUTTON (main screen) ──────────────────────────── */
+.btn-relapse {
+  width:100%;
+  margin-top:10px;
+  padding:13px 12px;
+  background:transparent;
+  border:1px solid var(--border2);
+  border-radius:3px;
+  font-family:'DM Sans',sans-serif;
+  font-size:11px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--text-dim);
+  cursor:pointer; transition:all 0.25s;
+}
+.btn-relapse:hover {
+  color:var(--red); border-color:var(--red-border);
+  background:var(--red-dim);
+}
+
+/* ─── LATE NIGHT BANNER ───────────────────────────────────── */
+.late-night-banner {
+  display:none;
+  margin:20px 22px 0;
+  padding:14px 16px;
+  background:var(--gold-dim);
+  border:1px solid rgba(212,168,83,0.2);
+  border-radius:4px;
+  font-size:13px; color:var(--text-mid);
+  line-height:1.5;
+}
+.late-night-banner strong { color:var(--gold); }
+
+/* ─── BOTTOM TAB BAR ──────────────────────────────────────── */
+.tab-bar {
+  position:fixed; bottom:0; right:0;
+  height:58px;
+  background:var(--surface);
+  border-top:1px solid var(--border2);
+  display:flex;
+  z-index:700;
+  width:100%; max-width:480px;
+  left:50%; transform:translateX(-50%);
+}
+.tab-btn {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:4px; cursor:pointer;
+  background:none; border:none;
+  color:var(--text-dim);
+  font-family:'DM Sans',sans-serif;
+  font-size:9.5px; letter-spacing:2px;
+  text-transform:uppercase; transition:color 0.2s;
+}
+.tab-btn.active { color:var(--gold); }
+.tab-icon { font-size:18px; line-height:1; transition:transform 0.2s; }
+.tab-btn.active .tab-icon { transform:scale(1.1); }
+
+/* ─── VIEWS ───────────────────────────────────────────────── */
+.view { display:none; }
+.view.active { display:block; }
+
+/* ─── ANALYTICS ───────────────────────────────────────────── */
+.analytics-view { max-width:480px; margin:0 auto; padding:0 0 80px; }
+
+.chart-container { padding:0 22px; margin-top:28px; }
+
+.chart-canvas-wrap {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:4px; padding:20px 16px 14px; position:relative;
+}
+
+.chart-empty {
+  text-align:center; padding:44px 0;
+  font-size:13px; color:var(--text-dim); font-style:italic;
+}
+
+.trigger-bars { display:flex; flex-direction:column; gap:10px; }
+.trigger-row { display:flex; align-items:center; gap:10px; }
+.trigger-row-label { font-size:12px; color:var(--text-mid); width:110px; flex-shrink:0; text-align:right; }
+.trigger-bar-track { flex:1; height:6px; background:var(--border2); border-radius:6px; overflow:hidden; }
+.trigger-bar-fill { height:100%; background:var(--gold); border-radius:6px; transition:width 0.8s cubic-bezier(0.4,0,0.2,1); }
+.trigger-row-count { font-family:'DM Mono',monospace; font-size:11px; color:var(--text-dim); width:20px; }
+
+.hour-grid { display:grid; grid-template-columns:repeat(12,1fr); gap:3px; margin-top:8px; }
+.hour-cell { aspect-ratio:1; border-radius:2px; background:var(--border2); }
+.hour-cell.h-low  { background:rgba(212,168,83,0.2); }
+.hour-cell.h-mid  { background:rgba(212,168,83,0.5); }
+.hour-cell.h-high { background:rgba(212,168,83,0.85); }
+.hour-cell.h-max  { background:var(--gold); }
+.hour-labels { display:grid; grid-template-columns:repeat(12,1fr); gap:3px; margin-bottom:4px; }
+.hour-lbl { font-family:'DM Mono',monospace; font-size:7.5px; color:var(--text-dim); text-align:center; }
+
+.insight-cards { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.insight-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:16px 14px; }
+.insight-val { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:300; color:var(--gold); line-height:1; margin-bottom:4px; }
+.insight-val.small { font-size:18px; }
+.insight-lbl { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:3px; }
+.insight-sub { font-size:11px; color:var(--text-dim); }
+
+.urge-full-list { display:flex; flex-direction:column; gap:6px; }
+.urge-full-item { display:flex; align-items:center; gap:10px; padding:11px 13px; background:var(--surface); border:1px solid var(--border); border-radius:3px; }
+.ufi-int { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:300; line-height:1; width:24px; text-align:center; flex-shrink:0; }
+.ufi-info { flex:1; display:flex; flex-direction:column; gap:3px; }
+.ufi-time { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-dim); }
+.ufi-trigger { font-size:11px; color:var(--text-mid); }
+.ufi-badge { padding:3px 9px; border-radius:10px; font-size:10px; background:var(--green-dim); border:1px solid var(--green-border); color:var(--green); flex-shrink:0; }
+
+/* ─── LOCATION SELECTOR ───────────────────────────────────── */
+.location-selector {
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:7px; padding:0 22px; margin-top:14px;
+}
+.loc-btn {
+  padding:10px 6px;
+  border-radius:3px; cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  font-size:10px; letter-spacing:1.5px;
+  text-transform:uppercase; font-weight:400;
+  border:1px solid var(--border2);
+  background:var(--surface);
+  color:var(--text-dim);
+  transition:all 0.2s;
+  display:flex; align-items:center; justify-content:center; gap:5px;
+}
+.loc-btn .loc-icon { font-size:13px; line-height:1; }
+
+/* Solo variants */
+.loc-btn.active-estudio    { background:rgba(107,143,181,0.15); border-color:rgba(107,143,181,0.45); color:#8ab0d0; }
+.loc-btn.active-casa       { background:rgba(212,168,83,0.13);  border-color:rgba(212,168,83,0.4);   color:var(--gold); }
+.loc-btn.active-vacaciones { background:rgba(93,186,125,0.13);  border-color:rgba(93,186,125,0.4);   color:var(--green); }
+/* Partner variants — same color family, stronger fill */
+.loc-btn.active-estudio-pareja    { background:rgba(107,143,181,0.28); border-color:rgba(107,143,181,0.65); color:#a8cbea; }
+.loc-btn.active-casa-pareja       { background:rgba(212,168,83,0.24);  border-color:rgba(212,168,83,0.6);   color:var(--gold); }
+.loc-btn.active-vacaciones-pareja { background:rgba(93,186,125,0.24);  border-color:rgba(93,186,125,0.6);   color:var(--green); }
+
+/* Calendar tints — base locations */
+.cal-day.loc-estudio    { box-shadow:inset 0 0 0 2px rgba(107,143,181,0.35); }
+.cal-day.loc-casa       { box-shadow:inset 0 0 0 2px rgba(212,168,83,0.3); }
+.cal-day.loc-vacaciones { box-shadow:inset 0 0 0 2px rgba(93,186,125,0.32); }
+/* Partner variants — thicker, brighter border + tiny heart */
+.cal-day.loc-estudio-pareja    { box-shadow:inset 0 0 0 2px rgba(107,143,181,0.6); }
+.cal-day.loc-casa-pareja       { box-shadow:inset 0 0 0 2px rgba(212,168,83,0.55); }
+.cal-day.loc-vacaciones-pareja { box-shadow:inset 0 0 0 2px rgba(93,186,125,0.58); }
+
+.cal-day.clean.loc-estudio    { background:rgba(107,143,181,0.18); }
+.cal-day.clean.loc-casa       { background:rgba(212,168,83,0.18); }
+.cal-day.clean.loc-vacaciones { background:rgba(93,186,125,0.18); }
+.cal-day.clean.loc-estudio-pareja    { background:rgba(107,143,181,0.3); }
+.cal-day.clean.loc-casa-pareja       { background:rgba(212,168,83,0.28); }
+.cal-day.clean.loc-vacaciones-pareja { background:rgba(93,186,125,0.28); }
+
+/* Heart dot for partner days */
+.cal-day.loc-estudio-pareja::after,
+.cal-day.loc-casa-pareja::after,
+.cal-day.loc-vacaciones-pareja::after {
+  content:'♥';
+  position:absolute; bottom:1px; right:1px;
+  font-size:5px; line-height:1;
+  color:rgba(255,255,255,0.55);
+  pointer-events:none;
+}
+
+/* ─── REASONS IN EMERGENCY ────────────────────────────────── */
+.e-reasons {
+  width:100%; margin-bottom:28px;
+  border-top:1px solid var(--border);
+  padding-top:20px;
+}
+.e-reasons-label {
+  font-size:9.5px; letter-spacing:4px;
+  text-transform:uppercase; color:var(--text-dim);
+  margin-bottom:14px; text-align:center;
+}
+.e-reason-item {
+  display:flex; align-items:baseline; gap:10px;
+  padding:9px 0;
+  border-bottom:1px solid var(--border);
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px; font-style:italic;
+  color:var(--text-mid); line-height:1.4;
+}
+.e-reason-item::before {
+  content:'—';
+  color:var(--gold); flex-shrink:0;
+  font-style:normal; font-size:14px;
+}
+
+/* ─── BACKUP ──────────────────────────────────────────────── */
+.backup-section {
+  padding:0 22px; margin-top:28px;
+  display:flex; gap:8px;
+}
+.backup-btn {
+  flex:1; padding:12px 8px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:3px; cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--text-dim);
+  transition:all 0.2s; text-align:center;
+}
+.backup-btn:hover { color:var(--text); border-color:var(--gold); }
+#importFileInput { display:none; }
+
+/* ─── DAY EDIT MODAL ──────────────────────────────────────── */
+.day-modal-backdrop {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.5); z-index:820;
+  align-items:flex-end; justify-content:center;
+}
+.day-modal-backdrop.open { display:flex; }
+.day-modal {
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:8px 8px 0 0;
+  padding:20px 20px 36px;
+  width:100%; max-width:480px;
+  animation: slideUp 0.28s cubic-bezier(0.34,1.2,0.64,1);
+}
+@keyframes slideUp {
+  from { transform:translateY(100%); opacity:0; }
+  to   { transform:translateY(0);    opacity:1; }
+}
+.dm-date {
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px; font-weight:300;
+  color:var(--text); margin-bottom:4px;
+}
+.dm-status {
+  font-size:11px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--text-dim);
+  margin-bottom:20px;
+}
+.dm-section-label {
+  font-size:9.5px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--text-dim);
+  margin-bottom:10px;
+}
+.dm-loc-row {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:7px; margin-bottom:20px;
+}
+.dm-loc-btn {
+  padding:9px 6px;
+  border-radius:3px; cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  font-size:10px; letter-spacing:1px;
+  text-transform:uppercase;
+  border:1px solid var(--border2);
+  background:var(--surface2); color:var(--text-dim);
+  transition:all 0.2s; text-align:center;
+}
+.dm-loc-btn.sel-estudio          { background:rgba(107,143,181,0.18); border-color:rgba(107,143,181,0.5); color:#8ab0d0; }
+.dm-loc-btn.sel-casa             { background:rgba(212,168,83,0.15);  border-color:rgba(212,168,83,0.45); color:var(--gold); }
+.dm-loc-btn.sel-vacaciones       { background:rgba(93,186,125,0.15);  border-color:rgba(93,186,125,0.45); color:var(--green); }
+.dm-loc-btn.sel-estudio-pareja    { background:rgba(107,143,181,0.28); border-color:rgba(107,143,181,0.65); color:#a8cbea; }
+.dm-loc-btn.sel-casa-pareja       { background:rgba(212,168,83,0.25);  border-color:rgba(212,168,83,0.6);   color:var(--gold); }
+.dm-loc-btn.sel-vacaciones-pareja { background:rgba(93,186,125,0.25);  border-color:rgba(93,186,125,0.6);   color:var(--green); }
+.dm-actions { display:flex; gap:8px; }
+.dm-relapse-btn {
+  flex:1; padding:11px;
+  background:var(--red-dim); border:1px solid var(--red-border);
+  color:var(--red); border-radius:3px; cursor:pointer;
+  font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; transition:all 0.2s;
+}
+.dm-relapse-btn:hover { background:rgba(192,80,80,0.2); }
+.dm-clear-btn {
+  flex:1; padding:11px;
+  background:transparent; border:1px solid var(--border2);
+  color:var(--text-dim); border-radius:3px; cursor:pointer;
+  font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; transition:all 0.2s;
+}
+.dm-clear-btn:hover { color:var(--text); }
+.dm-close-btn {
+  width:100%; margin-top:10px; padding:11px;
+  background:transparent; border:1px solid var(--border);
+  color:var(--text-dim); border-radius:3px; cursor:pointer;
+  font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; transition:all 0.2s;
+}
+.dm-close-btn:hover { color:var(--text); }
+
+/* ─── DATE PICKER (relapse overlay) ──────────────────────── */
+.relapse-date-wrap {
+  width:100%; margin-bottom:18px; text-align:left;
+}
+.relapse-date-label {
+  font-size:10px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--text-dim); display:block; margin-bottom:8px;
+}
+.relapse-date-input {
+  width:100%; padding:11px 13px;
+  background:var(--surface2); border:1px solid var(--border2);
+  border-radius:3px; color:var(--text);
+  font-family:'DM Mono',monospace; font-size:13px;
+  outline:none; transition:border-color 0.2s;
+  color-scheme: dark;
+}
+[data-theme="light"] .relapse-date-input { color-scheme: light; }
+.relapse-date-input:focus { border-color:rgba(212,168,83,0.4); }
+
+/* ─── LOCATION LEGEND ─────────────────────────────────────── */
+.loc-legend {
+  display:flex; gap:14px; flex-wrap:wrap;
+  margin-top:10px; padding-top:10px;
+  border-top:1px solid var(--border);
+}
+.loc-legend-item {
+  display:flex; align-items:center; gap:6px;
+  font-size:11px; color:var(--text-dim);
+}
+.loc-legend-dot {
+  width:10px; height:10px; border-radius:2px; flex-shrink:0;
+}
+
+/* ─── SCROLL FADE-IN ──────────────────────────────────────── */
+.fade-in {
+  opacity:0; transform:translateY(14px);
+  transition:opacity 0.5s ease, transform 0.5s ease;
+}
+.fade-in.visible { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body data-theme="dark">
+
+<div class="view active" id="viewHome">
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header fade-in">
+    <div class="logo">Libertad</div>
+    <div class="header-right">
+      <div class="header-date" id="headerDate"></div>
+      <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Cambiar tema">
+        <div class="theme-toggle-icon"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LATE NIGHT BANNER -->
+  <div class="late-night-banner" id="lateNightBanner">
+    <strong>Son las noches cuando el cerebro miente más.</strong>
+    Cierra el teléfono. Pon música o un podcast. Mañana agradecerás haberlo hecho.
+  </div>
+
+  <!-- HERO -->
+  <div class="hero fade-in">
+    <div class="hero-glow"></div>
+    <div class="streak-label">Días sin pornografía</div>
+    <div class="streak-number" id="streakNum">0</div>
+    <div class="streak-unit">días</div>
+    <div class="streak-science" id="streakScience"></div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-section fade-in">
+    <div class="progress-header">
+      <span class="progress-next" id="nextLabel">—</span>
+      <span class="progress-days" id="nextDays"></span>
+    </div>
+    <div class="track"><div class="track-fill" id="trackFill" style="width:0%"></div></div>
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="actions-row fade-in">
+    <button class="btn-checkin" id="checkinBtn" onclick="doCheckin()">✓ He superado hoy</button>
+    <button class="btn-emergency" onclick="openEmergency()">⚡ Tengo un impulso</button>
+  </div>
+  <div style="padding:0 22px">
+    <button class="btn-relapse" onclick="openRelapse()">↩ He consumido pornografía</button>
+  </div>
+  <div class="checkin-note" id="checkinNote" style="margin-top:10px"></div>
+
+  <!-- LOCATION SELECTOR -->
+  <div class="location-selector fade-in">
+    <button class="loc-btn" id="locBtn-estudio" onclick="setLocation('estudio')">
+      <span class="loc-icon">🏛</span>Estudio
+    </button>
+    <button class="loc-btn" id="locBtn-estudio-pareja" onclick="setLocation('estudio-pareja')">
+      <span class="loc-icon">🏛♥</span>Estudio + pareja
+    </button>
+    <button class="loc-btn" id="locBtn-casa" onclick="setLocation('casa')">
+      <span class="loc-icon">🏠</span>Casa
+    </button>
+    <button class="loc-btn" id="locBtn-casa-pareja" onclick="setLocation('casa-pareja')">
+      <span class="loc-icon">🏠♥</span>Casa + pareja
+    </button>
+    <button class="loc-btn" id="locBtn-vacaciones" onclick="setLocation('vacaciones')">
+      <span class="loc-icon">🌿</span>Vacaciones
+    </button>
+    <button class="loc-btn" id="locBtn-vacaciones-pareja" onclick="setLocation('vacaciones-pareja')">
+      <span class="loc-icon">🌿♥</span>Vacaciones + pareja
+    </button>
+  </div>
+
+  <!-- CALENDAR -->
+  <section class="fade-in">
+    <div class="section-label">Últimas semanas <span style="font-size:9px;opacity:0.5">· pulsa un día para editar</span></div>
+    <div class="cal-labels">
+      <div class="cal-lbl">L</div><div class="cal-lbl">M</div><div class="cal-lbl">X</div>
+      <div class="cal-lbl">J</div><div class="cal-lbl">V</div><div class="cal-lbl">S</div>
+      <div class="cal-lbl">D</div>
+    </div>
+    <div class="calendar-grid" id="calGrid"></div>
+    <div class="loc-legend">
+      <div class="loc-legend-item"><div class="loc-legend-dot" style="background:rgba(107,143,181,0.5)"></div>Estudio</div>
+      <div class="loc-legend-item"><div class="loc-legend-dot" style="background:rgba(107,143,181,0.9);outline:1px solid rgba(107,143,181,0.6)"></div>Estudio ♥</div>
+      <div class="loc-legend-item"><div class="loc-legend-dot" style="background:rgba(212,168,83,0.5)"></div>Casa</div>
+      <div class="loc-legend-item"><div class="loc-legend-dot" style="background:rgba(212,168,83,0.9);outline:1px solid rgba(212,168,83,0.6)"></div>Casa ♥</div>
+      <div class="loc-legend-item"><div class="loc-legend-dot" style="background:rgba(93,186,125,0.5)"></div>Vacaciones</div>
+      <div class="loc-legend-item"><div class="loc-legend-dot" style="background:rgba(93,186,125,0.9);outline:1px solid rgba(93,186,125,0.6)"></div>Vacac. ♥</div>
+      <div class="loc-legend-item"><div class="loc-legend-dot" style="background:var(--red);opacity:0.6"></div>Recaída</div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="fade-in">
+    <div class="section-label">Estadísticas</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num" id="sBest">0</div>
+        <div class="stat-lbl">Mejor racha</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="sUrges">0</div>
+        <div class="stat-lbl">Impulsos vencidos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="sWeeks">0</div>
+        <div class="stat-lbl">Semanas limpias</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="sRelapses">0</div>
+        <div class="stat-lbl">Recaídas</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="fade-in">
+
+  <!-- MILESTONES -->
+  <section class="fade-in">
+    <div class="section-label">Recuperación neurológica</div>
+    <div class="milestone-list" id="msList"></div>
+  </section>
+
+  <hr class="fade-in">
+
+  <!-- URGE LOG -->
+  <section class="fade-in" id="urgeLogSection">
+    <div class="section-label">Registro de impulsos</div>
+    <div class="urge-log" id="urgeLog">
+      <div style="font-size:12px;color:var(--text-dim);font-style:italic">Tus impulsos superados aparecerán aquí.</div>
+    </div>
+  </section>
+
+  <hr class="fade-in">
+
+  <!-- REASONS -->
+  <section class="fade-in">
+    <div class="section-label">Por qué lo hago</div>
+    <div class="reasons-list" id="reasonsList"></div>
+    <div class="reason-input-row">
+      <input class="reason-input" id="reasonInput" type="text" placeholder="Escribe tu razón..." maxlength="120"
+        onkeydown="if(event.key==='Enter') addReason()">
+      <button class="reason-add-btn" onclick="addReason()">+</button>
+    </div>
+  </section>
+
+  <!-- BACKUP -->
+  <div class="backup-section fade-in">
+    <button class="backup-btn" onclick="exportData()">↓ Exportar datos</button>
+    <button class="backup-btn" onclick="document.getElementById('importFileInput').click()">↑ Importar datos</button>
+    <input type="file" id="importFileInput" accept=".json" onchange="importData(event)">
+  </div>
+
+  <!-- bottom spacer -->
+  <div style="height:20px"></div>
+
+</div><!-- end app -->
+</div><!-- end viewHome -->
+
+<!-- ─── ANALYTICS VIEW ──────────────────────────────────────── -->
+<div class="view" id="viewAnalytics">
+<div class="analytics-view">
+
+  <div style="padding:30px 22px 0; display:flex; justify-content:space-between; align-items:center">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--text)">Análisis</div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)" id="analyticsDateRange"></div>
+  </div>
+
+  <!-- Insights summary -->
+  <div class="chart-container">
+    <div class="section-label">Resumen</div>
+    <div class="insight-cards" id="insightCards"></div>
+  </div>
+
+  <!-- Urge intensity chart -->
+  <div class="chart-container">
+    <div class="section-label">Intensidad a lo largo del tiempo</div>
+    <div class="chart-canvas-wrap">
+      <div id="urgeChartWrap"></div>
+    </div>
+  </div>
+
+  <!-- Hour of day heatmap -->
+  <div class="chart-container">
+    <div class="section-label">Hora del día</div>
+    <div class="chart-canvas-wrap">
+      <div class="hour-labels" id="hourLabels"></div>
+      <div class="hour-grid" id="hourGrid"></div>
+      <div style="margin-top:10px;font-size:11px;color:var(--text-dim)">Más oscuro = más impulsos en esa franja</div>
+    </div>
+  </div>
+
+  <!-- Trigger breakdown (urges) -->
+  <div class="chart-container">
+    <div class="section-label">Triggers de impulsos</div>
+    <div class="chart-canvas-wrap">
+      <div class="trigger-bars" id="triggerBars">
+        <div class="chart-empty">Sin datos todavía.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Relapse analytics -->
+  <div class="chart-container">
+    <div class="section-label">Recaídas</div>
+    <div class="chart-canvas-wrap">
+      <div id="relapseAnalytics"><div class="chart-empty">Sin recaídas registradas. Sigue así.</div></div>
+    </div>
+  </div>
+
+  <!-- Location breakdown -->
+  <div class="chart-container">
+    <div class="section-label">Por ubicación</div>
+    <div class="chart-canvas-wrap">
+      <div id="locationAnalytics"><div class="chart-empty">Sin datos de ubicación todavía.</div></div>
+    </div>
+  </div>
+
+  <!-- Full list -->
+  <div class="chart-container">
+    <div class="section-label">Todos los impulsos</div>
+    <div class="urge-full-list" id="urgeFullList">
+      <div class="chart-empty">Tus impulsos superados aparecerán aquí.</div>
+    </div>
+  </div>
+
+  <div style="height:20px"></div>
+</div>
+</div><!-- end viewAnalytics -->
+
+<!-- ─── TAB BAR ─────────────────────────────────────────────── -->
+<div class="tab-bar">
+  <button class="tab-btn active" id="tabHome" onclick="switchTab('Home')">
+    <span class="tab-icon">◈</span>
+    Inicio
+  </button>
+  <button class="tab-btn" id="tabAnalytics" onclick="switchTab('Analytics')">
+    <span class="tab-icon">◎</span>
+    Análisis
+  </button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ─── EMERGENCY OVERLAY ─────────────────────────────────── -->
+<div class="e-overlay" id="eOverlay">
+  <button class="e-close" onclick="closeEmergency()">✕</button>
+
+  <div class="e-inner">
+
+    <!-- Phase nav -->
+    <div class="phase-nav">
+      <button class="phase-nav-btn active" id="pnav0" onclick="setPhase(0)">Respira</button>
+      <button class="phase-nav-btn" id="pnav1" onclick="setPhase(1)">Ancla</button>
+      <button class="phase-nav-btn" id="pnav2" onclick="setPhase(2)">Actúa</button>
+    </div>
+
+    <!-- Phase 0: Breathe -->
+    <div class="e-phase active" id="ep0">
+      <div class="e-title">Para.</div>
+      <div class="e-sub">El impulso dura 10 minutos. Espera.</div>
+
+      <!-- Intensity slider -->
+      <div class="intensity-wrap">
+        <span class="intensity-label">Intensidad del impulso</span>
+        <div class="intensity-num" id="intensityNum">5</div>
+        <div class="intensity-desc" id="intensityDesc"></div>
+        <input class="intensity-slider" type="range" min="1" max="10" value="5" id="intensitySlider"
+          oninput="updateIntensity(this.value)">
+        <div class="intensity-ticks">
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+          <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+        </div>
+      </div>
+
+      <div class="breath-wrap">
+        <div class="breath-ring" id="ring1"></div>
+        <div class="breath-ring ring2" id="ring2"></div>
+        <div class="breath-label" id="breathLabel">•</div>
+      </div>
+      <div class="breath-guide" id="breathGuide">inhala...</div>
+      <div class="breath-counter" id="breathCount">4</div>
+
+      <div class="urge-timer" id="uTimer">10:00</div>
+      <div class="urge-timer-sub">el impulso habrá pasado</div>
+
+      <div class="e-affirmation" id="affirmEl"></div>
+
+      <!-- Personal reasons — shown during crisis -->
+      <div class="e-reasons" id="eReasons" style="display:none">
+        <div class="e-reasons-label">Por qué lo haces</div>
+        <div id="eReasonsList"></div>
+      </div>
+    </div>
+
+    <!-- Phase 1: Grounding 5-4-3-2-1 -->
+    <div class="e-phase" id="ep1">
+      <div class="e-title">Ancla.</div>
+      <div class="e-sub">Técnica 5-4-3-2-1 — vuelve al presente</div>
+
+      <div class="grounding-step">
+        <div class="ground-num">5</div>
+        <div class="ground-sense">VES</div>
+        <div class="ground-prompt">Nombra 5 cosas que puedes ver ahora mismo. Una pared, una silla, tus manos...</div>
+      </div>
+      <div class="grounding-step">
+        <div class="ground-num">4</div>
+        <div class="ground-sense">TOCAS</div>
+        <div class="ground-prompt">Toca 4 superficies diferentes. Siente la textura, la temperatura.</div>
+      </div>
+      <div class="grounding-step">
+        <div class="ground-num">3</div>
+        <div class="ground-sense">OYES</div>
+        <div class="ground-prompt">Escucha. ¿Qué 3 sonidos hay ahora mismo? El silencio también cuenta.</div>
+      </div>
+      <div class="grounding-step">
+        <div class="ground-num">2</div>
+        <div class="ground-sense">HUELES</div>
+        <div class="ground-prompt">Dos olores. Huele tu propia ropa, el aire, algo cercano.</div>
+      </div>
+      <div class="grounding-step">
+        <div class="ground-num">1</div>
+        <div class="ground-sense">SABOREAS</div>
+        <div class="ground-prompt">Un sabor. Bebe agua. ¿A qué sabe?</div>
+      </div>
+    </div>
+
+    <!-- Phase 2: Act -->
+    <div class="e-phase" id="ep2">
+      <div class="e-title">Actúa.</div>
+      <div class="e-sub">Haz una. Solo una.</div>
+
+      <ul class="e-actions">
+        <li onclick="logAction('agua')">    <span class="ic">💧</span> Bebe un vaso de agua fría ahora mismo</li>
+        <li onclick="logAction('frio')">    <span class="ic">🚿</span> Ducha fría — 30 segundos, eso es todo</li>
+        <li onclick="logAction('flex')">    <span class="ic">💪</span> 20 flexiones o sentadillas en el suelo</li>
+        <li onclick="logAction('salir')">   <span class="ic">🚶</span> Sal fuera 5 minutos — aire real</li>
+        <li onclick="logAction('llamar')">  <span class="ic">📞</span> Llama a alguien ahora mismo</li>
+        <li onclick="logAction('musica')">  <span class="ic">🎵</span> Pon música y muévete</li>
+        <li onclick="logAction('escribir')"><span class="ic">✍️</span> Escribe cómo te sientes en este momento</li>
+      </ul>
+
+      <!-- Trigger log -->
+      <div class="trigger-select">
+        <span class="trigger-select-label">¿Qué lo desencadenó? <span style="font-size:10px;opacity:0.6">(puedes marcar varios)</span></span>
+        <div class="trigger-chips" id="triggerChips">
+          <div class="chip" onclick="toggleChipMulti(this,'aburrimiento','e')">Aburrimiento</div>
+          <div class="chip" onclick="toggleChipMulti(this,'estrés','e')">Estrés</div>
+          <div class="chip" onclick="toggleChipMulti(this,'soledad','e')">Soledad</div>
+          <div class="chip" onclick="toggleChipMulti(this,'noche','e')">Noche / insomnio</div>
+          <div class="chip" onclick="toggleChipMulti(this,'ansiedad','e')">Ansiedad</div>
+          <div class="chip" onclick="toggleChipMulti(this,'hábito','e')">Hábito automático</div>
+          <div class="chip" onclick="toggleChipMulti(this,'redes','e')">Scroll / redes</div>
+          <div class="chip" onclick="toggleChipMulti(this,'cansancio','e')">Cansancio / fatiga</div>
+          <div class="chip" onclick="toggleChipMulti(this,'conflicto','e')">Conflicto / discusión</div>
+          <div class="chip" onclick="toggleChipMulti(this,'procrastinación','e')">Procrastinación</div>
+          <div class="chip" onclick="toggleChipMulti(this,'otro','e')">Otro</div>
+        </div>
+      </div>
+
+      <button class="trigger-done-btn" onclick="closeEmergency()">Lo he superado →</button>
+    </div>
+
+  </div><!-- e-inner -->
+</div><!-- e-overlay -->
+
+<!-- ─── RELAPSE OVERLAY ──────────────────────────────────────── -->
+<div class="r-overlay" id="rOverlay">
+  <button class="r-close" onclick="closeRelapse()">✕</button>
+
+  <div class="r-inner">
+
+    <div class="r-step-nav">
+      <div class="r-step-dot active" id="rdot0"></div>
+      <div class="r-step-dot" id="rdot1"></div>
+      <div class="r-step-dot" id="rdot2"></div>
+    </div>
+
+    <!-- Phase 0: Compassion -->
+    <div class="r-phase active" id="rp0">
+      <div class="r-title">Respira.</div>
+      <div class="r-sub">Lo que sientes ahora no es verdad</div>
+      <div class="r-quote">
+        El cerebro lleva años condicionado. Recaer no te hace débil — te hace humano. 
+        La vergüenza y el odio hacia ti mismo son el mayor enemigo ahora: te empujan a 
+        consumir de nuevo para escapar de ellos. Cierra ese círculo aquí.
+      </div>
+      <div class="r-quote" style="font-size:15px">
+        Cada persona que ha superado esto ha recaído. La diferencia entre quien lo supera 
+        y quien no, no es cuántas veces cae — es cuántas veces se levanta.
+      </div>
+      <button class="r-btn-primary" onclick="rNextPhase()">Continuar →</button>
+    </div>
+
+    <!-- Phase 1: What happened + protocol -->
+    <div class="r-phase" id="rp1">
+      <div class="r-title">Ahora mismo.</div>
+      <div class="r-sub">Protocolo post-recaída</div>
+
+      <div class="r-now-title">Haz esto en los próximos 10 minutos</div>
+      <ul class="r-protocol">
+        <li><span class="ic">🚿</span> Dúchate. El agua reestablece el estado físico y mental.</li>
+        <li><span class="ic">💧</span> Bebe agua. El cuerpo lo necesita.</li>
+        <li><span class="ic">🌬️</span> Sal a caminar aunque sean 5 minutos. Aire real.</li>
+        <li><span class="ic">📵</span> Aleja el dispositivo. Pon música, no el teléfono.</li>
+        <li><span class="ic">✍️</span> Escribe una frase sobre lo que quieres que ocurra mañana.</li>
+      </ul>
+
+      <div class="trigger-select" style="text-align:left">
+        <span class="trigger-select-label">¿Qué lo desencadenó? <span style="font-size:10px;opacity:0.6">(puedes marcar varios)</span></span>
+        <div class="trigger-chips" id="rTriggerChips">
+          <div class="chip" onclick="toggleChipMulti(this,'aburrimiento','r')">Aburrimiento</div>
+          <div class="chip" onclick="toggleChipMulti(this,'estrés','r')">Estrés</div>
+          <div class="chip" onclick="toggleChipMulti(this,'soledad','r')">Soledad</div>
+          <div class="chip" onclick="toggleChipMulti(this,'noche','r')">Noche / insomnio</div>
+          <div class="chip" onclick="toggleChipMulti(this,'ansiedad','r')">Ansiedad</div>
+          <div class="chip" onclick="toggleChipMulti(this,'hábito','r')">Hábito automático</div>
+          <div class="chip" onclick="toggleChipMulti(this,'redes','r')">Scroll / redes</div>
+          <div class="chip" onclick="toggleChipMulti(this,'cansancio','r')">Cansancio / fatiga</div>
+          <div class="chip" onclick="toggleChipMulti(this,'conflicto','r')">Conflicto / discusión</div>
+          <div class="chip" onclick="toggleChipMulti(this,'procrastinación','r')">Procrastinación</div>
+          <div class="chip" onclick="toggleChipMulti(this,'descuido','r')">Falta de vigilancia</div>
+          <div class="chip" onclick="toggleChipMulti(this,'otro','r')">Otro</div>
+        </div>
+      </div>
+
+      <button class="r-btn-primary" style="margin-top:18px" onclick="rNextPhase()">He entendido →</button>
+    </div>
+
+    <!-- Phase 2: Reset confirm -->
+    <div class="r-phase" id="rp2">
+      <div class="r-title">De nuevo.</div>
+      <div class="r-sub">El contador empieza ahora</div>
+      <div class="r-quote" style="font-size:15px">
+        Tu mejor racha está guardada. Lo que has aprendido sobre tus triggers también. 
+        Nada de esto se pierde — se convierte en conocimiento para la próxima vez.
+        <br><br>
+        El día 1 de mañana ya empieza hoy.
+      </div>
+
+      <!-- Date picker for past relapses -->
+      <div class="relapse-date-wrap">
+        <span class="relapse-date-label">¿Cuándo ocurrió?</span>
+        <input type="date" class="relapse-date-input" id="relapseDate">
+      </div>
+
+      <button class="r-btn-primary" onclick="doReset()">Reiniciar contador</button>
+      <button class="r-btn-secondary" onclick="closeRelapse()">Cerrar sin reiniciar</button>
+      <div class="r-reset-warning">Si no has consumido hoy, no hace falta reiniciar.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── DAY EDIT MODAL ────────────────────────────────────────── -->
+<div class="day-modal-backdrop" id="dayModalBackdrop" onclick="closeDayModal(event)">
+  <div class="day-modal">
+    <div class="dm-date" id="dmDate"></div>
+    <div class="dm-status" id="dmStatus"></div>
+
+    <div class="dm-section-label">Ubicación ese día</div>
+    <div class="dm-loc-row">
+      <button class="dm-loc-btn" id="dml-estudio"           onclick="dmSetLoc('estudio')">🏛 Estudio</button>
+      <button class="dm-loc-btn" id="dml-estudio-pareja"    onclick="dmSetLoc('estudio-pareja')">🏛♥ + pareja</button>
+      <button class="dm-loc-btn" id="dml-casa"              onclick="dmSetLoc('casa')">🏠 Casa</button>
+      <button class="dm-loc-btn" id="dml-casa-pareja"       onclick="dmSetLoc('casa-pareja')">🏠♥ + pareja</button>
+      <button class="dm-loc-btn" id="dml-vacaciones"        onclick="dmSetLoc('vacaciones')">🌿 Vacaciones</button>
+      <button class="dm-loc-btn" id="dml-vacaciones-pareja" onclick="dmSetLoc('vacaciones-pareja')">🌿♥ + pareja</button>
+    </div>
+
+    <div class="dm-section-label">Estado del día</div>
+    <div class="dm-actions">
+      <button class="dm-relapse-btn" onclick="dmMarkRelapse()">Marcar recaída</button>
+      <button class="dm-clear-btn"   onclick="dmClearRelapse()">Quitar recaída</button>
+    </div>
+    <button class="dm-close-btn" onclick="closeDayModal()">Cerrar</button>
+  </div>
+</div>
+
+<script>
+// ─── CONSTANTS ────────────────────────────────────────────
+const MILESTONES = [
+  { day:3,   txt:'La dopamina empieza a reequilibrarse. Los impulsos son más fuertes — es señal de recuperación.' },
+  { day:7,   txt:'Energía y claridad aumentan. La testosterona sube un 45%. El cerebro reconecta.' },
+  { day:14,  txt:'La corteza prefrontal recupera control sobre los impulsos. Piensas con más claridad.' },
+  { day:21,  txt:'21 días: una red neuronal nueva toma forma. El hábito contrario se asienta.' },
+  { day:30,  txt:'Un mes. Reducción real de ansiedad. La sensibilidad dopaminérgica natural aumenta.' },
+  { day:60,  txt:'Dos meses. Las sinapsis sanas se refuerzan. La atracción por personas reales vuelve.' },
+  { day:90,  txt:'Reboot profundo. Sensibilidad dopaminérgica prácticamente restaurada. Nuevo punto de partida.' },
+  { day:180, txt:'Nueva identidad consolidada. Lo que era lucha es ahora simplemente quien eres.' },
+  { day:365, txt:'Un año. La neuroplasticidad ha reescrito lo que tardó años en construirse.' },
+];
+
+const SCIENCE = [
+  [0,'El primer paso es el más importante. Hoy empieza el reboot.'],
+  [1,'24 horas. El sistema dopaminérgico ya responde al cambio.'],
+  [2,'Los receptores de dopamina empiezan a recuperar sensibilidad.'],
+  [3,'Pico de abstinencia. Si lo superas hoy, el camino se vuelve más fácil.'],
+  [7,'Tu testosterona ha aumentado un 45%. Tu energía y claridad son reales.'],
+  [14,'La corteza prefrontal recupera el control. Tus decisiones son más tuyas.'],
+  [21,'21 días: una red neuronal nueva se está asentando.'],
+  [30,'Un mes. Tu cerebro ha reescrito miles de conexiones sinápticas.'],
+  [60,'Dos meses. La sensibilidad al placer real se ha disparado.'],
+  [90,'90 días: el umbral mítico. Tu dopamina basal está cerca de lo normal.'],
+  [180,'Seis meses. La neuroplasticidad ha hecho su trabajo silencioso.'],
+  [365,'Un año. Completamente diferente. Completamente tuyo.'],
+];
+
+const AFFIRMATIONS = [
+  'El impulso que sientes ahora durará menos que tu orgullo mañana.',
+  'No eres tus impulsos. Eres quien decide qué hacer con ellos.',
+  'En 10 minutos esto habrá pasado y tú habrás ganado.',
+  'Cada "no" que dices construye quien quieres ser.',
+  'El placer que promete el impulso no existe — solo existe la resaca después.',
+  'El malestar de ahora es el precio exacto de la libertad de mañana.',
+  'Eres más grande que este momento.',
+  'Un solo minuto de resistencia cambia la trayectoria de todo el día.',
+];
+
+// ─── STATE ────────────────────────────────────────────────
+function loadState() {
+  try {
+    const r = localStorage.getItem('libertad_v3');
+    return r ? JSON.parse(r) : {};
+  } catch(e) { return {}; }
+}
+
+function save(s) {
+  localStorage.setItem('libertad_v3', JSON.stringify(s));
+}
+
+let S = loadState();
+if (!S.startDate) S.startDate = new Date().toISOString();
+if (!S.bestStreak) S.bestStreak = 0;
+if (!S.relapses) S.relapses = 0;
+if (!S.urges) S.urges = 0;
+if (!S.reasons) S.reasons = [];
+if (!S.urgeLog) S.urgeLog = [];
+if (!S.calData) S.calData = {};
+if (!S.theme) S.theme = 'dark';
+if (!S.location) S.location = 'casa';
+if (!S.locationLog) S.locationLog = [];
+if (!S.relapseLog) S.relapseLog = [];
+save(S);
+
+// Apply saved theme
+document.body.setAttribute('data-theme', S.theme);
+
+// ─── UTILS ────────────────────────────────────────────────
+function getDays() {
+  return Math.floor((Date.now() - new Date(S.startDate)) / 86400000);
+}
+
+function getScience(d) {
+  let txt = SCIENCE[0][1];
+  for (const [days,msg] of SCIENCE) { if (d>=days) txt=msg; }
+  return txt;
+}
+
+function getNextMs(d) {
+  return MILESTONES.find(m => d < m.day) || null;
+}
+
+function todayKey() {
+  return new Date().toISOString().slice(0,10);
+}
+
+// ─── LOCATION ─────────────────────────────────────────────
+const LOC_NAMES = {
+  estudio:'Estudio', 'estudio-pareja':'Estudio + pareja',
+  casa:'Casa', 'casa-pareja':'Casa + pareja',
+  vacaciones:'Vacaciones', 'vacaciones-pareja':'Vacaciones + pareja',
+};
+const ALL_LOCS = ['estudio','estudio-pareja','casa','casa-pareja','vacaciones','vacaciones-pareja'];
+
+function getBaseLocation(loc) {
+  return loc ? loc.replace('-pareja','') : 'casa';
+}
+
+function getLocationForDate(dateStr) {
+  if (!S.locationLog.length) return S.location || 'casa';
+  const sorted = [...S.locationLog].sort((a,b)=>a.date.localeCompare(b.date));
+  let loc = sorted[0].loc;
+  for (const e of sorted) { if (e.date <= dateStr) loc = e.loc; else break; }
+  return loc;
+}
+
+function setLocation(loc, dateStr) {
+  dateStr = dateStr || todayKey();
+  S.location = loc;
+  S.locationLog = S.locationLog.filter(e=>e.date !== dateStr);
+  S.locationLog.push({loc, date:dateStr});
+  S.locationLog.sort((a,b)=>a.date.localeCompare(b.date));
+  save(S);
+  renderLocationButtons(loc);
+  renderCalendar(getDays());
+}
+
+function renderLocationButtons(loc) {
+  ALL_LOCS.forEach(l => {
+    const btn = document.getElementById('locBtn-'+l);
+    if (!btn) return;
+    btn.className = 'loc-btn' + (l===loc ? ' active-'+l : '');
+  });
+}
+
+// ─── RENDER ───────────────────────────────────────────────
+function render() {
+  const d = getDays();
+  const today = todayKey();
+
+  // Header
+  document.getElementById('headerDate').textContent =
+    new Date().toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'long'}).toUpperCase();
+
+  // Late night check
+  const h = new Date().getHours();
+  document.getElementById('lateNightBanner').style.display = (h>=22||h<4) ? 'block':'none';
+
+  // Streak
+  document.getElementById('streakNum').textContent = d;
+  document.getElementById('streakScience').textContent = getScience(d);
+
+  // Progress
+  const next = getNextMs(d);
+  const prev = [...MILESTONES].reverse().find(m=>d>=m.day) || null;
+  if (next) {
+    const from = prev ? prev.day : 0;
+    const pct = Math.min(100, ((d-from)/(next.day-from))*100);
+    document.getElementById('trackFill').style.width = pct+'%';
+    document.getElementById('nextLabel').textContent = 'Hacia día '+next.day;
+    document.getElementById('nextDays').textContent = (next.day-d)+' días';
+  } else {
+    document.getElementById('trackFill').style.width = '100%';
+    document.getElementById('nextLabel').textContent = 'Todos los hitos superados ✦';
+    document.getElementById('nextDays').textContent = '';
+  }
+
+  // Checkin
+  const doneTodayCheckin = S.lastCheckin === today;
+  const btn = document.getElementById('checkinBtn');
+  btn.disabled = doneTodayCheckin;
+  btn.innerHTML = doneTodayCheckin ? '✓ Día confirmado' : '✓ He superado hoy';
+  document.getElementById('checkinNote').textContent = doneTodayCheckin
+    ? 'Los días cuentan automáticamente — este es tu confirmación de hoy'
+    : 'Los días sin recaída se cuentan solos. Pulsa para confirmar con intención.';
+
+  // Calendar (last 35 days, grid of 7)
+  renderCalendar(d);
+
+  // Stats
+  document.getElementById('sBest').textContent = Math.max(S.bestStreak, d);
+  document.getElementById('sUrges').textContent = S.urges;
+  document.getElementById('sWeeks').textContent = Math.floor(d/7);
+  document.getElementById('sRelapses').textContent = S.relapses;
+
+  // Milestones
+  const msl = document.getElementById('msList');
+  msl.innerHTML = '';
+  let foundNext = false;
+  MILESTONES.forEach(m => {
+    const reached = d >= m.day;
+    const isNext = !reached && !foundNext;
+    if (isNext) foundNext = true;
+    msl.innerHTML += `
+      <div class="milestone-item ${reached?'reached':''} ${isNext?'next':''}">
+        <div class="ms-dot"></div>
+        <div class="ms-content">
+          <div class="ms-day">DÍA ${m.day}</div>
+          <div class="ms-title">${m.txt}</div>
+        </div>
+        <div class="ms-check">✦</div>
+      </div>`;
+  });
+
+  // Urge log
+  renderUrgeLog();
+
+  // Reasons
+  renderReasons();
+
+  // Location buttons
+  renderLocationButtons(getLocationForDate(todayKey()));
+}
+
+function renderCalendar(currentDays) {
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  const todayTs = new Date(); todayTs.setHours(0,0,0,0);
+  const startTs = new Date(S.startDate); startTs.setHours(0,0,0,0);
+
+  // Show last 35 days (5 weeks)
+  for (let i=34; i>=0; i--) {
+    const d = new Date(todayTs); d.setDate(d.getDate()-i);
+    const key = d.toISOString().slice(0,10);
+    const isToday = i===0;
+    const beforeStart = d < startTs;
+    const isRelapse = S.calData[key] === 'relapse';
+    const isClean = !beforeStart && !isRelapse;
+    const loc = getLocationForDate(key);
+
+    const el = document.createElement('div');
+    let cls = 'cal-day';
+    if (isToday) cls += ' today';
+    if (isClean) cls += ' clean';
+    if (isRelapse) cls += ' relapse';
+    if (!beforeStart) cls += ' loc-'+loc;
+    el.className = cls;
+    el.title = key + (beforeStart?'':`\n${LOC_NAMES[loc]||loc}`) + (isRelapse?' · Recaída':'');
+    el.dataset.dateKey = key;
+    el.addEventListener('click', ()=>openDayModal(key));
+    grid.appendChild(el);
+  }
+
+  // Update location buttons to current location
+  renderLocationButtons(getLocationForDate(todayKey()));
+}
+
+function renderUrgeLog() {
+  const el = document.getElementById('urgeLog');
+  if (!S.urgeLog.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--text-dim);font-style:italic">Tus impulsos superados aparecerán aquí.</div>';
+    return;
+  }
+  el.innerHTML = [...S.urgeLog].reverse().slice(0,8).map(u => `
+    <div class="urge-entry">
+      <span class="urge-time">${u.time}</span>
+      ${u.intensity ? `<span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">int.${u.intensity}</span>` : ''}
+      ${u.trigger ? `<span class="urge-tag">${u.trigger}</span>` : ''}
+      <span class="urge-outcome">superado</span>
+    </div>
+  `).join('');
+}
+
+function renderReasons() {
+  const el = document.getElementById('reasonsList');
+  if (!S.reasons.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--text-dim);padding:6px 0;font-style:italic">Escribe tus razones para hacerlas más reales.</div>';
+    return;
+  }
+  el.innerHTML = S.reasons.map((r,i)=>`
+    <div class="reason-item">
+      <span class="reason-bullet">◆</span>
+      <span class="reason-text">${r}</span>
+      <button class="reason-del" onclick="delReason(${i})">×</button>
+    </div>`).join('');
+}
+
+// ─── ACTIONS ──────────────────────────────────────────────
+function doCheckin() {
+  const today = todayKey();
+  if (S.lastCheckin===today) return;
+  S.lastCheckin = today;
+  S.calData[today] = 'clean';
+  const d = getDays();
+  if (d > S.bestStreak) S.bestStreak = d;
+  save(S);
+  const n = document.getElementById('streakNum');
+  n.classList.remove('pop'); void n.offsetWidth; n.classList.add('pop');
+  showToast('Día confirmado. Un día más construido.');
+  render();
+}
+
+function addReason() {
+  const inp = document.getElementById('reasonInput');
+  const v = inp.value.trim();
+  if (!v) return;
+  S.reasons.push(v);
+  save(S);
+  inp.value = '';
+  renderReasons();
+}
+
+function delReason(i) {
+  S.reasons.splice(i,1);
+  save(S);
+  renderReasons();
+}
+
+function toggleReset() {
+  document.getElementById('resetBox').classList.toggle('open');
+}
+
+function doReset() {
+  const dp = document.getElementById('relapseDate');
+  const relapseDate = (dp && dp.value) ? dp.value : todayKey();
+
+  // Streak = days from current start to relapse date
+  const relapseTs = new Date(relapseDate); relapseTs.setHours(12,0,0,0);
+  const currentStartTs = new Date(S.startDate);
+  const streakDays = Math.max(0, Math.floor((relapseTs - currentStartTs) / 86400000));
+
+  if (streakDays > S.bestStreak) S.bestStreak = streakDays;
+  S.relapses += 1;
+  S.calData[relapseDate] = 'relapse';
+
+  // Log full relapse event
+  S.relapseLog.push({
+    isoTime: relapseTs.toISOString(),
+    time: relapseTs.toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'}),
+    triggers: [...selectedRTriggers],
+    streakDays,
+  });
+
+  // Reset start to the day after the relapse
+  const nextDay = new Date(relapseTs); nextDay.setDate(nextDay.getDate()+1);
+  S.startDate = nextDay.toISOString();
+  S.lastCheckin = null;
+  save(S);
+  closeRelapse();
+  showToast('Reiniciado' + (relapseDate !== todayKey() ? ` desde el ${relapseDate}` : '') + '. Mañana empieza el día 1.');
+  render();
+}
+
+// Theme
+function toggleTheme() {
+  const cur = document.body.getAttribute('data-theme');
+  const next = cur==='dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', next);
+  S.theme = next;
+  save(S);
+}
+
+// ─── EMERGENCY ────────────────────────────────────────────
+let timerInterval = null;
+let breathTimeout = null;
+let urgeSeconds = 600;
+let selectedTriggers = [];   // multi-select for impulse
+let selectedRTriggers = [];  // multi-select for relapse
+let currentPhase = 0;
+
+// Unified multi-select chip toggle (scope: 'e' = emergency, 'r' = relapse)
+function toggleChipMulti(el, value, scope) {
+  el.classList.toggle('selected');
+  const arr = scope === 'r' ? selectedRTriggers : selectedTriggers;
+  const idx = arr.indexOf(value);
+  if (idx >= 0) arr.splice(idx, 1);
+  else arr.push(value);
+}
+
+function openEmergency() {
+  document.getElementById('eOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Reset slider
+  currentIntensity = 5;
+  const slider = document.getElementById('intensitySlider');
+  if (slider) slider.value = 5;
+  updateIntensity(5);
+
+  // Affirmation
+  document.getElementById('affirmEl').textContent =
+    '"' + AFFIRMATIONS[Math.floor(Math.random()*AFFIRMATIONS.length)] + '"';
+
+  // Personal reasons — show if any exist
+  const eReasons = document.getElementById('eReasons');
+  const eReasonsList = document.getElementById('eReasonsList');
+  if (S.reasons && S.reasons.length) {
+    eReasonsList.innerHTML = S.reasons.map(r =>
+      `<div class="e-reason-item">${r}</div>`
+    ).join('');
+    eReasons.style.display = 'block';
+  } else {
+    eReasons.style.display = 'none';
+  }
+
+  // Reset timer
+  urgeSeconds = 600;
+  updateTimer();
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    urgeSeconds = Math.max(0, urgeSeconds-1);
+    updateTimer();
+    if (urgeSeconds===0) {
+      clearInterval(timerInterval);
+      document.getElementById('uTimer').style.color = 'var(--green)';
+    }
+  }, 1000);
+
+  // Reset trigger chips
+  document.querySelectorAll('#triggerChips .chip').forEach(c=>c.classList.remove('selected'));
+  selectedTriggers = [];
+
+  setPhase(0);
+  startBreathing();
+}
+
+function closeEmergency() {
+  document.getElementById('eOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  clearInterval(timerInterval);
+  clearTimeout(breathTimeout);
+  document.getElementById('uTimer').style.color = '';
+
+  // Save urge with intensity
+  S.urges += 1;
+  S.urgeLog.push({
+    time: new Date().toLocaleString('es-ES',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'}),
+    isoTime: new Date().toISOString(),
+    triggers: [...selectedTriggers],
+    trigger: selectedTriggers[0] || null, // backwards compat for old chart code
+    intensity: currentIntensity,
+  });
+  save(S);
+  render();
+  showToast('Impulso superado ✦');
+}
+
+function updateTimer() {
+  const m = Math.floor(urgeSeconds/60);
+  const s = urgeSeconds%60;
+  document.getElementById('uTimer').textContent =
+    String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+
+function setPhase(n) {
+  currentPhase = n;
+  document.querySelectorAll('.e-phase').forEach((p,i)=>{
+    p.classList.toggle('active', i===n);
+  });
+  document.querySelectorAll('.phase-nav-btn').forEach((b,i)=>{
+    b.classList.toggle('active', i===n);
+  });
+}
+
+function toggleChip(el, trigger) {
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedTrigger = trigger;
+}
+
+function logAction(a) {
+  const msgs = {
+    agua:'El agua fría interrumpe el ciclo fisiológico del impulso.',
+    frio:'El frío activa el nervio vago y reduce la urgencia.',
+    flex:'La energía física desplaza directamente el impulso.',
+    salir:'Cambiar de entorno es cambiar de estado mental.',
+    llamar:'La conexión real es el antídoto del aislamiento.',
+    musica:'El ritmo reorienta el sistema límbico.',
+    escribir:'Nombrar lo que sientes reduce su intensidad.',
+  };
+  showToast(msgs[a] || 'Buena elección.');
+}
+
+// Breathing: 4-7-8
+function startBreathing() {
+  clearTimeout(breathTimeout);
+  const phases = [
+    {label:'inhala...', duration:4000, count:4, inhale:true},
+    {label:'retén...',  duration:7000, count:7, inhale:true},
+    {label:'exhala...', duration:8000, count:8, inhale:false},
+  ];
+  let p = 0;
+  let cnt = 0;
+  let countInterval = null;
+
+  function nextPhase() {
+    const ph = phases[p%3];
+    document.getElementById('breathGuide').textContent = ph.label;
+    document.getElementById('breathCount').textContent = ph.count;
+    const ring1 = document.getElementById('ring1');
+    const ring2 = document.getElementById('ring2');
+    if (ph.inhale) {
+      ring1.classList.add('inhale');
+      ring2.classList.add('inhale');
+    } else {
+      ring1.classList.remove('inhale');
+      ring2.classList.remove('inhale');
+    }
+
+    // Countdown
+    clearInterval(countInterval);
+    cnt = ph.count;
+    document.getElementById('breathCount').textContent = cnt;
+    countInterval = setInterval(()=>{
+      cnt--;
+      document.getElementById('breathCount').textContent = Math.max(0,cnt);
+    }, ph.duration/ph.count);
+
+    p++;
+    breathTimeout = setTimeout(nextPhase, ph.duration);
+  }
+
+  nextPhase();
+}
+
+// ─── INTENSITY SLIDER ─────────────────────────────────────
+const INTENSITY_LABELS = {
+  1:'Leve. El cuerpo apenas lo registra.',
+  2:'Leve. Fácil de ignorar con distracción.',
+  3:'Moderado. Presente pero manejable.',
+  4:'Moderado. Requiere atención consciente.',
+  5:'Notable. El pensamiento vuelve solo.',
+  6:'Fuerte. Cuesta mantener el foco.',
+  7:'Fuerte. El cuerpo siente tensión física.',
+  8:'Muy fuerte. Urgencia real. Usa el protocolo.',
+  9:'Intenso. Necesitas movimiento físico ahora.',
+  10:'Máximo. Sal de donde estás inmediatamente.',
+};
+const INTENSITY_COLORS = {
+  1:'var(--green)', 2:'var(--green)', 3:'#8bc34a', 4:'#cddc39',
+  5:'var(--gold)', 6:'var(--gold)', 7:'#ff9800',
+  8:'#ff6b35', 9:'var(--red)', 10:'var(--red)',
+};
+
+let currentIntensity = 5;
+
+function updateIntensity(v) {
+  currentIntensity = parseInt(v);
+  const n = document.getElementById('intensityNum');
+  const d = document.getElementById('intensityDesc');
+  n.textContent = v;
+  n.style.color = INTENSITY_COLORS[currentIntensity] || 'var(--gold)';
+  d.textContent = INTENSITY_LABELS[currentIntensity] || '';
+  d.style.color = INTENSITY_COLORS[currentIntensity] || 'var(--text-dim)';
+}
+
+// ─── RELAPSE OVERLAY ──────────────────────────────────────
+let rPhase = 0;
+
+function openRelapse() {
+  document.getElementById('rOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  rPhase = 0;
+  selectedRTriggers = [];
+  document.querySelectorAll('#rTriggerChips .chip').forEach(c=>c.classList.remove('selected'));
+  // Init date picker to today
+  const dp = document.getElementById('relapseDate');
+  if (dp) dp.value = todayKey();
+  setRPhase(0);
+}
+
+function closeRelapse() {
+  document.getElementById('rOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function setRPhase(n) {
+  rPhase = n;
+  document.querySelectorAll('.r-phase').forEach((p,i)=>p.classList.toggle('active',i===n));
+  ['rdot0','rdot1','rdot2'].forEach((id,i)=>{
+    const el = document.getElementById(id);
+    el.className = 'r-step-dot' + (i<n?' done':i===n?' active':'');
+  });
+}
+
+function rNextPhase() { setRPhase(rPhase+1); }
+
+// ─── DAY EDIT MODAL ───────────────────────────────────────
+let dmCurrentDate = null;
+
+function openDayModal(dateStr) {
+  dmCurrentDate = dateStr;
+  const d = new Date(dateStr+'T12:00:00');
+  document.getElementById('dmDate').textContent =
+    d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+  const isRelapse = S.calData[dateStr] === 'relapse';
+  document.getElementById('dmStatus').textContent = isRelapse ? '⚠ Marcado como recaída' : '✓ Día limpio';
+  const loc = getLocationForDate(dateStr);
+  ALL_LOCS.forEach(l=>{
+    document.getElementById('dml-'+l).className = 'dm-loc-btn'+(l===loc?' sel-'+l:'');
+  });
+  document.getElementById('dayModalBackdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDayModal(evt) {
+  if (evt && evt.target !== document.getElementById('dayModalBackdrop')) return;
+  document.getElementById('dayModalBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+  dmCurrentDate = null;
+}
+
+function dmSetLoc(loc) {
+  if (!dmCurrentDate) return;
+  S.locationLog = S.locationLog.filter(e=>e.date !== dmCurrentDate);
+  S.locationLog.push({loc, date:dmCurrentDate});
+  S.locationLog.sort((a,b)=>a.date.localeCompare(b.date));
+  if (dmCurrentDate === todayKey()) S.location = loc;
+  save(S);
+  ALL_LOCS.forEach(l=>{
+    document.getElementById('dml-'+l).className = 'dm-loc-btn'+(l===loc?' sel-'+l:'');
+  });
+  renderCalendar(getDays());
+  showToast('Ubicación actualizada.');
+}
+
+function dmMarkRelapse() {
+  if (!dmCurrentDate) return;
+  S.calData[dmCurrentDate] = 'relapse';
+  save(S);
+  document.getElementById('dmStatus').textContent = '⚠ Marcado como recaída';
+  renderCalendar(getDays());
+  showToast('Día marcado como recaída.');
+}
+
+function dmClearRelapse() {
+  if (!dmCurrentDate) return;
+  delete S.calData[dmCurrentDate];
+  save(S);
+  document.getElementById('dmStatus').textContent = '✓ Día limpio';
+  renderCalendar(getDays());
+  showToast('Recaída eliminada del día.');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+// ─── SCROLL ANIMATIONS ────────────────────────────────────
+function initObserver() {
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, {threshold:0.12});
+  document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+}
+
+// ─── TABS ─────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view'+name).classList.add('active');
+  document.getElementById('tab'+name).classList.add('active');
+  if (name==='Analytics') renderAnalytics();
+  // scroll to top
+  window.scrollTo(0,0);
+}
+
+// ─── ANALYTICS ────────────────────────────────────────────
+const INT_COLOR = (v) => {
+  if (v<=2) return 'var(--green)';
+  if (v<=4) return '#8bc34a';
+  if (v<=6) return 'var(--gold)';
+  if (v<=8) return '#ff9800';
+  return 'var(--red)';
+};
+
+function renderAnalytics() {
+  const log = S.urgeLog || [];
+  const rlog = S.relapseLog || [];
+  const startDate = new Date(S.startDate);
+  const now = new Date();
+
+  // Helper: count triggers from an array of events (each has .triggers array or .trigger string)
+  function countTriggers(events) {
+    const counts = {};
+    events.forEach(u => {
+      const trigs = u.triggers?.length ? u.triggers : (u.trigger ? [u.trigger] : []);
+      trigs.forEach(t => { counts[t] = (counts[t]||0)+1; });
+    });
+    return counts;
+  }
+
+  // Date range label
+  document.getElementById('analyticsDateRange').textContent =
+    startDate.toLocaleDateString('es-ES',{day:'numeric',month:'short'}) + ' → hoy';
+
+  // ── Insights ──
+  const avgInt = log.length
+    ? (log.reduce((a,u)=>a+(u.intensity||5),0)/log.length).toFixed(1) : '—';
+
+  const urgeTrigCounts = countTriggers(log);
+  const topUrgeTrig = Object.entries(urgeTrigCounts).sort((a,b)=>b[1]-a[1])[0]?.[0] || '—';
+  const highCount = log.filter(u=>(u.intensity||5)>=8).length;
+
+  // Relapse stats
+  const avgStreak = rlog.length
+    ? Math.round(rlog.reduce((a,r)=>a+(r.streakDays||0),0)/rlog.length) : null;
+
+  // Trend: are streaks getting longer? compare first half vs second half of relapseLog
+  let trendText = '—';
+  if (rlog.length >= 2) {
+    const mid = Math.ceil(rlog.length/2);
+    const firstHalf = rlog.slice(0,mid);
+    const secondHalf = rlog.slice(mid);
+    const avgFirst = firstHalf.reduce((a,r)=>a+(r.streakDays||0),0)/firstHalf.length;
+    const avgSecond = secondHalf.reduce((a,r)=>a+(r.streakDays||0),0)/secondHalf.length;
+    const diff = avgSecond - avgFirst;
+    trendText = diff > 0 ? `+${Math.round(diff)}d ↑` : diff < 0 ? `${Math.round(diff)}d ↓` : '= estable';
+  }
+
+  document.getElementById('insightCards').innerHTML = `
+    <div class="insight-card">
+      <div class="insight-lbl">Intensidad media</div>
+      <div class="insight-val">${avgInt}</div>
+      <div class="insight-sub">de los impulsos</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-lbl">Impulsos vencidos</div>
+      <div class="insight-val">${log.length}</div>
+      <div class="insight-sub">todos superados</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-lbl">Racha media</div>
+      <div class="insight-val">${avgStreak !== null ? avgStreak+'d' : '—'}</div>
+      <div class="insight-sub">antes de recaída</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-lbl">Tendencia</div>
+      <div class="insight-val small" style="color:${trendText.includes('↑')?'var(--green)':trendText.includes('↓')?'var(--red)':'var(--gold)'}">${trendText}</div>
+      <div class="insight-sub">rachas más largas</div>
+    </div>
+  `;
+
+  // ── Intensity chart (SVG) ──
+  const wrap = document.getElementById('urgeChartWrap');
+  if (!log.length) {
+    wrap.innerHTML = '<div class="chart-empty">Registra impulsos para ver la gráfica.</div>';
+  } else {
+    const W = wrap.clientWidth || 320;
+    const H = 140;
+    const PAD = {top:12, right:12, bottom:28, left:28};
+    const innerW = W - PAD.left - PAD.right;
+    const innerH = H - PAD.top - PAD.bottom;
+
+    // X: time range from startDate to now
+    const tMin = startDate.getTime();
+    const tMax = now.getTime();
+    const tRange = tMax - tMin || 1;
+
+    const xOf = (isoOrObj) => {
+      const t = new Date(isoOrObj.isoTime || S.startDate).getTime();
+      return PAD.left + ((t - tMin) / tRange) * innerW;
+    };
+    const yOf = (v) => PAD.top + innerH - ((v-1)/9)*innerH;
+
+    // Grid lines y
+    let svgLines = '';
+    [1,3,5,7,10].forEach(v=>{
+      const y = yOf(v);
+      svgLines += `<line x1="${PAD.left}" y1="${y}" x2="${W-PAD.right}" y2="${y}"
+        stroke="var(--border2)" stroke-width="1"/>
+        <text x="${PAD.left-4}" y="${y+4}" text-anchor="end"
+          font-family="DM Mono,monospace" font-size="9" fill="var(--text-dim)">${v}</text>`;
+    });
+
+    // X axis date labels (show start and today)
+    const fmtDate = d => new Date(d).toLocaleDateString('es-ES',{day:'numeric',month:'short'});
+    svgLines += `
+      <text x="${PAD.left}" y="${H-4}" font-family="DM Mono,monospace" font-size="9" fill="var(--text-dim)">${fmtDate(tMin)}</text>
+      <text x="${W-PAD.right}" y="${H-4}" text-anchor="end" font-family="DM Mono,monospace" font-size="9" fill="var(--text-dim)">${fmtDate(tMax)}</text>`;
+
+    // Relapses: vertical markers
+    let relapseLines = '';
+    if (S.calData) {
+      Object.entries(S.calData).forEach(([k,v])=>{
+        if (v==='relapse') {
+          const t = new Date(k).getTime();
+          const rx = PAD.left + ((t-tMin)/tRange)*innerW;
+          relapseLines += `<line x1="${rx}" y1="${PAD.top}" x2="${rx}" y2="${PAD.top+innerH}"
+            stroke="var(--red)" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>`;
+        }
+      });
+    }
+
+    // Smooth line through points (sorted)
+    const sorted = [...log].filter(u=>u.isoTime).sort((a,b)=>new Date(a.isoTime)-new Date(b.isoTime));
+    let polyline = '';
+    if (sorted.length > 1) {
+      const pts = sorted.map(u=>`${xOf(u)},${yOf(u.intensity||5)}`).join(' ');
+      polyline = `<polyline points="${pts}" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-opacity="0.3" stroke-linejoin="round"/>`;
+    }
+
+    // Dots
+    let dots = '';
+    log.forEach(u => {
+      const cx = u.isoTime ? xOf(u) : PAD.left + innerW*0.5;
+      const cy = yOf(u.intensity||5);
+      const col = INT_COLOR(u.intensity||5);
+      const r = 5 + (u.intensity||5)*0.5;
+      dots += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${col}" fill-opacity="0.7"
+        stroke="${col}" stroke-width="1">
+        <title>Intensidad: ${u.intensity||5} · ${u.time}${u.trigger?' · '+u.trigger:''}</title>
+      </circle>`;
+    });
+
+    wrap.innerHTML = `
+      <svg class="urge-chart" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+        ${svgLines}
+        ${relapseLines}
+        ${polyline}
+        ${dots}
+        <line x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${PAD.top+innerH}"
+          stroke="var(--border2)" stroke-width="1"/>
+        <line x1="${PAD.left}" y1="${PAD.top+innerH}" x2="${W-PAD.right}" y2="${PAD.top+innerH}"
+          stroke="var(--border2)" stroke-width="1"/>
+      </svg>
+      <div style="margin-top:8px;font-size:11px;color:var(--text-dim)">
+        Cada círculo es un impulso superado. Líneas rojas punteadas = recaídas. Tamaño proporcional a intensidad.
+      </div>`;
+  }
+
+  // ── Hour heatmap ──
+  const hourCounts = Array(24).fill(0);
+  log.forEach(u=>{ if(u.isoTime) hourCounts[new Date(u.isoTime).getHours()]++; });
+  const maxH = Math.max(...hourCounts, 1);
+
+  // Show 12 cells for AM (0-11) then 12 for PM (12-23)
+  const hlabels = document.getElementById('hourLabels');
+  const hgrid = document.getElementById('hourGrid');
+  hlabels.innerHTML = '';
+  hgrid.innerHTML = '';
+  // Row 1: AM
+  for (let h=0; h<12; h++) {
+    hlabels.innerHTML += `<div class="hour-lbl">${h===0?'0h':h+'h'}</div>`;
+  }
+  for (let h=0; h<12; h++) {
+    const ratio = hourCounts[h]/maxH;
+    const cls = ratio===0?'':ratio<0.34?'h-low':ratio<0.67?'h-mid':ratio<1?'h-high':'h-max';
+    hgrid.innerHTML += `<div class="hour-cell ${cls}" title="${h}h: ${hourCounts[h]} impulso(s)"></div>`;
+  }
+  // Row 2: PM — reuse same grid (24 cells = 2 rows of 12)
+  for (let h=12; h<24; h++) {
+    hlabels.innerHTML += `<div class="hour-lbl">${h}h</div>`;
+  }
+  for (let h=12; h<24; h++) {
+    const ratio = hourCounts[h]/maxH;
+    const cls = ratio===0?'':ratio<0.34?'h-low':ratio<0.67?'h-mid':ratio<1?'h-high':'h-max';
+    hgrid.innerHTML += `<div class="hour-cell ${cls}" title="${h}h: ${hourCounts[h]} impulso(s)"></div>`;
+  }
+
+  // ── Trigger bars (urges) ──
+  const tCounts = countTriggers(log);
+  const tEntries = Object.entries(tCounts).sort((a,b)=>b[1]-a[1]);
+  const maxT = tEntries[0]?.[1] || 1;
+  const tbEl = document.getElementById('triggerBars');
+  if (!tEntries.length) {
+    tbEl.innerHTML = '<div class="chart-empty">Sin datos todavía.</div>';
+  } else {
+    tbEl.innerHTML = tEntries.map(([label,count])=>`
+      <div class="trigger-row">
+        <div class="trigger-row-label">${label}</div>
+        <div class="trigger-bar-track">
+          <div class="trigger-bar-fill" style="width:${(count/maxT*100).toFixed(0)}%"></div>
+        </div>
+        <div class="trigger-row-count">${count}</div>
+      </div>`).join('');
+  }
+
+  // ── Relapse analytics ──
+  const rSection = document.getElementById('relapseAnalytics');
+  if (!rlog.length) {
+    rSection.innerHTML = '<div class="chart-empty">Sin recaídas registradas. Sigue así.</div>';
+  } else {
+    // Streak lengths chart (bar chart of each relapse's streak)
+    const maxStreak = Math.max(...rlog.map(r=>r.streakDays||0), 1);
+    const streakBars = rlog.map((r,i) => {
+      const pct = ((r.streakDays||0)/maxStreak*100).toFixed(0);
+      const trigs = (r.triggers||[]).join(', ') || 'sin trigger';
+      return `
+        <div class="trigger-row" title="${r.time}: ${trigs}">
+          <div class="trigger-row-label" style="font-family:'DM Mono',monospace;font-size:10px">#${i+1} · ${r.time}</div>
+          <div class="trigger-bar-track">
+            <div class="trigger-bar-fill" style="width:${pct}%;background:var(--red)"></div>
+          </div>
+          <div class="trigger-row-count" style="color:var(--red)">${r.streakDays||0}d</div>
+        </div>`;
+    }).join('');
+
+    // Relapse trigger counts
+    const rTrigCounts = countTriggers(rlog);
+    const rTEntries = Object.entries(rTrigCounts).sort((a,b)=>b[1]-a[1]);
+    const maxRT = rTEntries[0]?.[1] || 1;
+    const rTrigBars = rTEntries.length
+      ? rTEntries.map(([label,count])=>`
+          <div class="trigger-row">
+            <div class="trigger-row-label">${label}</div>
+            <div class="trigger-bar-track">
+              <div class="trigger-bar-fill" style="width:${(count/maxRT*100).toFixed(0)}%;background:rgba(224,112,112,0.7)"></div>
+            </div>
+            <div class="trigger-row-count" style="color:var(--red)">${count}</div>
+          </div>`).join('')
+      : '<div class="chart-empty" style="padding:16px 0">Sin triggers registrados.</div>';
+
+    rSection.innerHTML = `
+      <div class="section-label" style="margin-bottom:12px">Racha rota en cada recaída</div>
+      <div class="trigger-bars" style="margin-bottom:20px">${streakBars}</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-bottom:18px">
+        Si los días aumentan de izquierda a derecha, estás progresando.
+      </div>
+      <div class="section-label" style="margin-bottom:12px">Triggers de recaídas</div>
+      <div class="trigger-bars">${rTrigBars}</div>
+    `;
+  }
+
+  // ── Full urge list ──
+  const fullEl = document.getElementById('urgeFullList');
+  if (!log.length) {
+    fullEl.innerHTML = '<div class="chart-empty">Tus impulsos superados aparecerán aquí.</div>';
+  } else {
+    fullEl.innerHTML = [...log].reverse().map(u=>{
+      const trigs = u.triggers?.length ? u.triggers : (u.trigger ? [u.trigger] : []);
+      const loc = u.isoTime ? getLocationForDate(u.isoTime.slice(0,10)) : null;
+      const locColors = {estudio:'#8ab0d0', casa:'var(--gold)', vacaciones:'var(--green)'};
+      const locDot = loc ? `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${locColors[loc]||'var(--text-dim)'};margin-right:4px;flex-shrink:0"></span>` : '';
+      return `
+      <div class="urge-full-item">
+        <div class="ufi-int" style="color:${INT_COLOR(u.intensity||5)}">${u.intensity||'—'}</div>
+        <div class="ufi-info">
+          <div class="ufi-time">${locDot}${u.time}</div>
+          <div class="ufi-trigger">${trigs.length ? trigs.join(' · ') : 'sin trigger'}</div>
+        </div>
+        <div class="ufi-badge">superado</div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Location breakdown ──
+  const locEl = document.getElementById('locationAnalytics');
+  const BASE_LOCS = ['estudio','casa','vacaciones'];
+  const BASE_LABELS = {estudio:'Estudio', casa:'Casa', vacaciones:'Vacaciones'};
+  const BASE_COLORS = {estudio:'rgba(107,143,181,0.7)', casa:'rgba(212,168,83,0.7)', vacaciones:'rgba(93,186,125,0.7)'};
+  const PARTNER_COLORS = {estudio:'rgba(107,143,181,0.95)', casa:'rgba(212,168,83,0.95)', vacaciones:'rgba(93,186,125,0.95)'};
+
+  // Count days / urges / relapses per all 6 locations (last 90 days)
+  const locStats = {};
+  ALL_LOCS.forEach(l=>{ locStats[l]={days:0,urges:0,relapses:0}; });
+
+  const today90 = new Date(); today90.setHours(0,0,0,0);
+  for (let i=89; i>=0; i--) {
+    const d = new Date(today90); d.setDate(d.getDate()-i);
+    const key = d.toISOString().slice(0,10);
+    const l = getLocationForDate(key);
+    if (locStats[l]) {
+      locStats[l].days++;
+      if (S.calData[key]==='relapse') locStats[l].relapses++;
+    }
+  }
+  log.forEach(u => {
+    if (!u.isoTime) return;
+    const l = getLocationForDate(u.isoTime.slice(0,10));
+    if (locStats[l]) locStats[l].urges++;
+  });
+
+  const totalDays = ALL_LOCS.reduce((a,l)=>a+locStats[l].days, 0);
+  if (totalDays === 0) {
+    locEl.innerHTML = '<div class="chart-empty">Empieza a usar el selector de ubicación para ver estadísticas.</div>';
+  } else {
+    const maxD = Math.max(...ALL_LOCS.map(l=>locStats[l].days), 1);
+
+    const sections = BASE_LOCS.map(base => {
+      const solo    = locStats[base];
+      const partner = locStats[base+'-pareja'];
+      if (solo.days + partner.days === 0) return '';
+
+      const makeRow = (l, label, color, stats) => {
+        if (stats.days === 0) return '';
+        const urgePer7 = (stats.urges / stats.days * 7).toFixed(1);
+        const relapsePct = (stats.relapses / stats.days * 100).toFixed(0);
+        return `
+          <div style="margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+              <span style="font-size:12px;color:var(--text-mid)">${label}</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">${stats.days}d</span>
+            </div>
+            <div class="trigger-bar-track" style="height:6px;margin-bottom:6px">
+              <div class="trigger-bar-fill" style="width:${(stats.days/maxD*100).toFixed(0)}%;background:${color}"></div>
+            </div>
+            <div style="display:flex;gap:16px">
+              <span style="font-size:11px;color:var(--text-dim)"><span style="color:var(--text-mid)">${urgePer7}</span> impulsos/sem</span>
+              <span style="font-size:11px;color:var(--text-dim)"><span style="color:${stats.relapses>0?'var(--red)':'var(--green)'}">${relapsePct}%</span> recaídas</span>
+            </div>
+          </div>`;
+      };
+
+      return `
+        <div style="margin-bottom:18px">
+          <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px">${BASE_LABELS[base]}</div>
+          ${makeRow(base, 'Solo', BASE_COLORS[base], solo)}
+          ${makeRow(base+'-pareja', '+ Pareja', PARTNER_COLORS[base], partner)}
+        </div>
+        <div style="border-top:1px solid var(--border);margin-bottom:18px"></div>`;
+    }).join('');
+
+    locEl.innerHTML = sections || '<div class="chart-empty">Sin datos suficientes.</div>';
+  }
+}
+
+// ─── BACKUP ───────────────────────────────────────────────
+function exportData() {
+  const json = JSON.stringify(S, null, 2);
+  const blob = new Blob([json], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'libertad-backup-' + todayKey() + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Datos exportados correctamente.');
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      // Basic validation
+      if (!imported.startDate) throw new Error('Formato inválido');
+      if (!confirm('¿Restaurar estos datos? Se sobrescribirá todo lo actual.')) return;
+      S = imported;
+      save(S);
+      document.body.setAttribute('data-theme', S.theme || 'dark');
+      render();
+      showToast('Datos restaurados correctamente.');
+    } catch(err) {
+      showToast('Error: fichero no válido.');
+    }
+    // Reset input so same file can be imported again if needed
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+render();
+initObserver();
+updateIntensity(5);
+</script>
+</body>
+</html>
