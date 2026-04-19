@@ -64,7 +64,7 @@
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
 html {
-  font-size: var(--font-scale, 16px);
+  /* font-size set directly via JS to avoid circular var() reference */
 }
 
 body {
@@ -1854,10 +1854,13 @@ hr {
         El día 1 de mañana ya empieza hoy.
       </div>
 
-      <!-- Date picker for past relapses -->
+      <!-- Date + time picker for past relapses -->
       <div class="relapse-date-wrap">
         <span class="relapse-date-label">¿Cuándo ocurrió?</span>
-        <input type="date" class="relapse-date-input" id="relapseDate">
+        <div style="display:flex;gap:8px">
+          <input type="date" class="relapse-date-input" id="relapseDate" style="flex:2">
+          <input type="time" class="relapse-date-input" id="relapseTime" style="flex:1">
+        </div>
       </div>
 
       <button class="r-btn-primary" onclick="doReset()">Reiniciar contador</button>
@@ -2200,32 +2203,34 @@ function toggleReset() {
 
 function doReset() {
   const dp = document.getElementById('relapseDate');
+  const tp = document.getElementById('relapseTime');
   const relapseDate = (dp && dp.value) ? dp.value : todayKey();
+  const relapseTime = (tp && tp.value) ? tp.value : '00:00';
 
-  // Streak = days from current start to relapse date
-  const relapseTs = new Date(relapseDate); relapseTs.setHours(12,0,0,0);
+  // Combine date + time for exact relapse timestamp
+  const relapseStart = new Date(relapseDate + 'T' + relapseTime + ':00');
+
+  // Streak = full days from current start to relapse moment
   const currentStartTs = new Date(S.startDate);
-  const streakDays = Math.max(0, Math.floor((relapseTs - currentStartTs) / 86400000));
+  const streakDays = Math.max(0, Math.floor((relapseStart - currentStartTs) / 86400000));
 
   if (streakDays > S.bestStreak) S.bestStreak = streakDays;
   S.relapses += 1;
   S.calData[relapseDate] = 'relapse';
 
-  // Log full relapse event
   S.relapseLog.push({
-    isoTime: relapseTs.toISOString(),
-    time: relapseTs.toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'}),
+    isoTime: relapseStart.toISOString(),
+    time: relapseStart.toLocaleString('es-ES',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}),
     triggers: [...selectedRTriggers],
     streakDays,
   });
 
-  // Reset start to the day after the relapse
-  const nextDay = new Date(relapseTs); nextDay.setDate(nextDay.getDate()+1);
-  S.startDate = nextDay.toISOString();
+  // Counter restarts from the exact relapse moment
+  S.startDate = relapseStart.toISOString();
   S.lastCheckin = null;
   save(S);
   closeRelapse();
-  showToast('Reiniciado' + (relapseDate !== todayKey() ? ` desde el ${relapseDate}` : '') + '. Mañana empieza el día 1.');
+  showToast('Reiniciado desde las ' + relapseTime + '. Hoy es día 0.');
   render();
 }
 
@@ -2241,10 +2246,9 @@ function toggleTheme() {
 // ─── FONT SIZE ────────────────────────────────────────────
 function applyFontSize(px) {
   px = parseInt(px);
-  document.documentElement.style.setProperty('--font-scale', px+'px');
+  document.documentElement.style.fontSize = px + 'px';
   document.getElementById('fontSizeSlider').value = px;
-  document.getElementById('fontSizeLabel').textContent = px+'px';
-  // Update preset buttons
+  document.getElementById('fontSizeLabel').textContent = px + 'px';
   const presets = [13, 16, 19, 22];
   document.querySelectorAll('.font-preset-btn').forEach((btn, i) => {
     btn.classList.toggle('active', presets[i] === px);
@@ -2469,9 +2473,14 @@ function openRelapse() {
   rPhase = 0;
   selectedRTriggers = [];
   document.querySelectorAll('#rTriggerChips .chip').forEach(c=>c.classList.remove('selected'));
-  // Init date picker to today
+  // Init date + time pickers
   const dp = document.getElementById('relapseDate');
+  const tp = document.getElementById('relapseTime');
   if (dp) dp.value = todayKey();
+  if (tp) {
+    const now = new Date();
+    tp.value = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  }
   setRPhase(0);
 }
 
