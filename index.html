@@ -63,6 +63,10 @@
 /* ─── RESET & BASE ───────────────────────────────────────── */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
+html {
+  font-size: var(--font-scale, 16px);
+}
+
 body {
   background: var(--bg);
   color: var(--text);
@@ -1184,6 +1188,73 @@ hr {
   font-style:normal; font-size:14px;
 }
 
+/* ─── FONT SIZE PANEL ─────────────────────────────────────── */
+.font-size-btn {
+  width: 32px; height: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 13px; color: var(--text-dim);
+  transition: all 0.2s; flex-shrink: 0;
+}
+.font-size-btn:hover { color: var(--gold); border-color: var(--gold); }
+
+.font-panel {
+  display: none;
+  position: fixed; top: 68px; right: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 16px 18px;
+  z-index: 600;
+  box-shadow: var(--shadow);
+  min-width: 220px;
+  animation: fadeUp 0.2s ease;
+}
+.font-panel.open { display: block; }
+.font-panel-title {
+  font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 14px;
+}
+.font-size-row {
+  display: flex; align-items: center; gap: 12px;
+}
+.font-size-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--gold);
+  width: 32px; text-align: right; flex-shrink: 0;
+}
+.font-size-slider {
+  -webkit-appearance: none; appearance: none;
+  flex: 1; height: 3px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--border2) 0%, var(--gold) 100%);
+  outline: none; cursor: pointer;
+}
+.font-size-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--text); cursor: pointer;
+  border: 2px solid var(--bg);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.font-size-presets {
+  display: flex; gap: 6px; margin-top: 12px;
+}
+.font-preset-btn {
+  flex: 1; padding: 7px 4px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 3px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text-dim);
+  transition: all 0.2s;
+}
+.font-preset-btn:hover { color: var(--text); }
+.font-preset-btn.active { background: var(--gold-dim); border-color: rgba(212,168,83,0.35); color: var(--gold); }
+
 /* ─── BACKUP ──────────────────────────────────────────────── */
 .backup-section {
   padding:0 22px; margin-top:28px;
@@ -1333,9 +1404,28 @@ hr {
     <div class="logo">Libertad</div>
     <div class="header-right">
       <div class="header-date" id="headerDate"></div>
+      <div class="font-size-btn" onclick="toggleFontPanel()" title="Tamaño de texto">Aa</div>
       <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Cambiar tema">
         <div class="theme-toggle-icon"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- Font size panel -->
+  <div class="font-panel" id="fontPanel">
+    <div class="font-panel-title">Tamaño de texto</div>
+    <div class="font-size-row">
+      <span style="font-size:11px;color:var(--text-dim)">A</span>
+      <input class="font-size-slider" type="range" min="13" max="22" step="1"
+        id="fontSizeSlider" oninput="applyFontSize(this.value)">
+      <span style="font-size:15px;color:var(--text-dim)">A</span>
+      <span class="font-size-label" id="fontSizeLabel">16px</span>
+    </div>
+    <div class="font-size-presets">
+      <button class="font-preset-btn" onclick="applyFontSize(13)">Pequeño</button>
+      <button class="font-preset-btn" onclick="applyFontSize(16)">Normal</button>
+      <button class="font-preset-btn" onclick="applyFontSize(19)">Grande</button>
+      <button class="font-preset-btn" onclick="applyFontSize(22)">Tablet</button>
     </div>
   </div>
 
@@ -1864,6 +1954,7 @@ if (!S.reasons) S.reasons = [];
 if (!S.urgeLog) S.urgeLog = [];
 if (!S.calData) S.calData = {};
 if (!S.theme) S.theme = 'dark';
+if (!S.fontSize) S.fontSize = 16;
 if (!S.location) S.location = 'casa';
 if (!S.locationLog) S.locationLog = [];
 if (!S.relapseLog) S.relapseLog = [];
@@ -2146,6 +2237,34 @@ function toggleTheme() {
   S.theme = next;
   save(S);
 }
+
+// ─── FONT SIZE ────────────────────────────────────────────
+function applyFontSize(px) {
+  px = parseInt(px);
+  document.documentElement.style.setProperty('--font-scale', px+'px');
+  document.getElementById('fontSizeSlider').value = px;
+  document.getElementById('fontSizeLabel').textContent = px+'px';
+  // Update preset buttons
+  const presets = [13, 16, 19, 22];
+  document.querySelectorAll('.font-preset-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', presets[i] === px);
+  });
+  S.fontSize = px;
+  save(S);
+}
+
+function toggleFontPanel() {
+  document.getElementById('fontPanel').classList.toggle('open');
+}
+
+// Close font panel when clicking outside
+document.addEventListener('click', (e) => {
+  const panel = document.getElementById('fontPanel');
+  if (!panel.classList.contains('open')) return;
+  if (!panel.contains(e.target) && !e.target.closest('.font-size-btn')) {
+    panel.classList.remove('open');
+  }
+});
 
 // ─── EMERGENCY ────────────────────────────────────────────
 let timerInterval = null;
@@ -2846,6 +2965,7 @@ function importData(event) {
 render();
 initObserver();
 updateIntensity(5);
+applyFontSize(S.fontSize || 16);
 </script>
 </body>
 </html>
