@@ -2244,9 +2244,37 @@ function toggleTheme() {
 }
 
 // ─── FONT SIZE ────────────────────────────────────────────
+// Detect iOS (Chrome en iPad no soporta CSS zoom, necesita transform)
+const _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+function _applyZoom(z) {
+  if (_isIOS) {
+    const b = document.body;
+    b.style.transformOrigin = 'top left';
+    if (z === 1) {
+      b.style.transform = '';
+      b.style.width = '';
+      b.style.minHeight = '';
+    } else {
+      b.style.transform = 'scale(' + z + ')';
+      b.style.width = (100 / z).toFixed(3) + '%';
+      b.style.minHeight = (100 / z).toFixed(3) + 'vh';
+    }
+  } else {
+    document.documentElement.style.zoom = z;
+  }
+}
+
 function applyFontSize(px) {
   px = parseInt(px);
-  document.documentElement.style.fontSize = px + 'px';
+  // Mapeamos los 4 pasos de px a factores de zoom
+  const zoomMap = { 13: 0.82, 16: 1, 19: 1.22, 22: 1.5 };
+  // Para valores intermedios interpolamos linealmente
+  const z = zoomMap[px] !== undefined
+    ? zoomMap[px]
+    : 0.82 + ((px - 13) / (22 - 13)) * (1.5 - 0.82);
+  _applyZoom(z);
   document.getElementById('fontSizeSlider').value = px;
   document.getElementById('fontSizeLabel').textContent = px + 'px';
   const presets = [13, 16, 19, 22];
