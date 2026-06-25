@@ -372,14 +372,20 @@
     <section class="card hero">
       <div class="hero-top">
         <div>
-          <div class="eyebrow">últimos 7 días</div>
-          <h2>Control tranquilo, sin culpa.</h2>
-          <p>Registra un impulso superado o una recaída. La app transforma esos datos en una señal simple de progreso.</p>
+          <div class="eyebrow">registro rápido</div>
+          <h2>¿Qué ha pasado?</h2>
+          <p>Elige una etiqueta y guarda el impulso. Lo demás queda para estadísticas.</p>
           <div class="trend-pill" id="trendPill">sin datos todavía</div>
         </div>
         <div class="score-ring"><div><strong id="heroScore">--</strong><span>calma</span></div></div>
       </div>
     </section>
+
+    <div class="section-h">
+      <h2>Etiqueta</h2>
+      <span class="count" id="catCount"></span>
+    </div>
+    <div class="chips" id="homeCats"></div>
 
     <div class="quick-grid">
       <button class="quick good" id="quickResisted">
@@ -394,16 +400,8 @@
       </button>
     </div>
 
-    <div class="summary" id="summary"></div>
-
     <div class="section-h">
-      <h2>Categorías</h2>
-      <span class="count" id="catCount"></span>
-    </div>
-    <div class="chips" id="homeCats"></div>
-
-    <div class="section-h">
-      <h2>Hoy</h2>
+      <h2>Últimos registros</h2>
       <span class="count" id="todayCount"></span>
     </div>
     <div class="mini-today" id="todayList"></div>
@@ -427,18 +425,10 @@
     </section>
 
     <div class="section-h">
-      <h2>Por categoría</h2>
+      <h2>Por etiqueta</h2>
       <span class="count">líneas propias</span>
     </div>
     <div class="cat-grid" id="categoryStats"></div>
-  </section>
-
-  <section id="viewHistory" class="view">
-    <div class="section-h">
-      <h2>Historial</h2>
-      <span class="count" id="historyCount"></span>
-    </div>
-    <div class="list" id="historyList"></div>
   </section>
 </main>
 
@@ -449,11 +439,7 @@
   </button>
   <button class="tab" data-view="stats">
     <svg viewBox="0 0 24 24" fill="none"><path d="M4 17l5-6 4 4 7-9" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span>Stats</span>
-  </button>
-  <button class="tab" data-view="history">
-    <svg viewBox="0 0 24 24" fill="none"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg>
-    <span>Historial</span>
+    <span>Estadísticas</span>
   </button>
 </nav>
 
@@ -464,7 +450,7 @@
 
 <div class="menu" id="menu">
   <button id="mTheme"><svg viewBox="0 0 24 24" fill="none"><path d="M21 12.5A8.5 8.5 0 1111.5 3a6.6 6.6 0 109.5 9.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Tema · <span id="themeLabel" style="color:var(--indigo);margin-left:2px">Automático</span></button>
-  <button id="mCats"><svg viewBox="0 0 24 24" fill="none"><path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Categorías</button>
+  <button id="mCats"><svg viewBox="0 0 24 24" fill="none"><path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Etiquetas</button>
   <button id="mSetup"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v18M5 8h14M5 16h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Sincronización</button>
   <hr>
   <button id="mExport"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Exportar datos</button>
@@ -489,7 +475,7 @@
   </div>
 
   <div class="field">
-    <label>Categoría</label>
+    <label>Etiqueta</label>
     <div class="cat-select" id="sheetCats"></div>
   </div>
 
@@ -830,7 +816,7 @@ function addCategory(name){
   const c = {id:uid(), name:clean, color:colors[categories.length % colors.length], active:true, created_at:new Date().toISOString(), updated_at:new Date().toISOString()};
   categories.push(c);
   draftCategoryId = c.id;
-  saveLocal(); render(); pushCategory(c); toast('Categoría añadida');
+  saveLocal(); render(); pushCategory(c); toast('Etiqueta añadida');
 }
 function updateCategory(id, patch){
   const i=categories.findIndex(c=>c.id===id);
@@ -840,7 +826,7 @@ function updateCategory(id, patch){
   saveLocal(); render(); pushCategory(categories[i]);
 }
 function removeCategory(id){
-  if(activeCategories().length <= 1){ toast('Deja al menos una categoría'); return; }
+  if(activeCategories().length <= 1){ toast('Deja al menos una etiqueta'); return; }
   const used = entries.some(e=>e.categoryId===id);
   if(used){
     updateCategory(id,{active:false});
@@ -849,7 +835,8 @@ function removeCategory(id){
     saveLocal(); render(); pushDelete('category',id);
   }
   if(draftCategoryId === id) draftCategoryId = activeCategories()[0].id;
-  toast('Categoría quitada');
+  if(selectedCategory === id) selectedCategory = 'all';
+  toast('Etiqueta quitada');
 }
 
 function scoreFor(data, days){
@@ -918,35 +905,34 @@ function rollingPoints(days, cat='all'){
 function render(){
   renderHome();
   renderStats();
-  renderHistory();
   renderSheetOptions();
 }
 function renderHome(){
-  const m = metricsFor(7,'all');
+  const m = metricsFor(7, selectedCategory);
   $('#heroScore').textContent = entries.length ? m.calm : '--';
   const tr = trendInfo();
   $('#trendPill').className = 'trend-pill ' + tr.className;
   $('#trendPill').textContent = tr.text;
 
-  const month = metricsFor(30,'all');
-  $('#summary').innerHTML = `
-    <div class="stat"><div class="k">Control</div><div class="v" style="color:var(--good-ink)">${month.control}%</div><div class="s">ponderado</div></div>
-    <div class="stat"><div class="k">Recaídas</div><div class="v" style="color:var(--bad-ink)">${month.relapsed}</div><div class="s">30 días</div></div>
-    <div class="stat"><div class="k">Intensidad</div><div class="v">${month.avg ? month.avg.toFixed(1) : '0'}</div><div class="s">media</div></div>
-    <div class="stat"><div class="k">Racha</div><div class="v">${currentStreak()}</div><div class="s">días</div></div>`;
-
   const cats = activeCategories();
-  $('#catCount').textContent = `${cats.length}`;
-  $('#homeCats').innerHTML = cats.map(c=>`<button class="chip" data-open-cat="${c.id}"><span class="color-dot" style="background:${c.color}"></span>${esc(c.name)}</button>`).join('') +
-    `<button class="chip" id="addCatHome">+ Añadir</button>`;
-  document.querySelectorAll('[data-open-cat]').forEach(b=>b.addEventListener('click',()=>{selectedCategory=b.dataset.openCat; switchTab('stats');}));
-  $('#addCatHome').addEventListener('click',showCategories);
+  $('#catCount').textContent = selectedCategory === 'all' ? 'todas' : categoryById(selectedCategory).name;
+  $('#homeCats').innerHTML =
+    `<button class="chip ${selectedCategory==='all'?'active':''}" data-home-cat="all">Todas</button>` +
+    cats.map(c=>`<button class="chip ${selectedCategory===c.id?'active':''}" data-home-cat="${c.id}"><span class="color-dot" style="background:${c.color}"></span>${esc(c.name)}</button>`).join('') +
+    `<button class="chip" id="editTagsHome">Editar</button>`;
+  document.querySelectorAll('[data-home-cat]').forEach(b=>b.addEventListener('click',()=>{
+    selectedCategory = b.dataset.homeCat;
+    if(selectedCategory !== 'all') draftCategoryId = selectedCategory;
+    renderHome();
+    renderStats();
+  }));
+  $('#editTagsHome').addEventListener('click',showCategories);
 
-  const todayKey = keyOf(new Date());
-  const todays = entries.filter(e=>keyOf(e.at)===todayKey).sort((a,b)=>new Date(b.at)-new Date(a.at));
-  $('#todayCount').textContent = todays.length ? `${todays.length} registro${todays.length>1?'s':''}` : '';
-  $('#todayList').innerHTML = todays.length ? todays.map(entryHTML).join('') :
-    `<div class="empty">Todavía no hay registros hoy. Si aparece un impulso, puedes guardarlo en unos segundos.</div>`;
+  const allForTag = entries.filter(e=>selectedCategory === 'all' || e.categoryId === selectedCategory);
+  const recent = [...allForTag].sort((a,b)=>new Date(b.at)-new Date(a.at)).slice(0,6);
+  $('#todayCount').textContent = recent.length ? `${recent.length} de ${allForTag.length}` : '';
+  $('#todayList').innerHTML = recent.length ? recent.map(entryHTML).join('') :
+    `<div class="empty">No hay registros para esta etiqueta todavía. Si aparece un impulso, puedes guardarlo en unos segundos.</div>`;
   bindEntryClicks($('#todayList'));
 }
 function renderStats(){
@@ -956,11 +942,11 @@ function renderStats(){
   $('#statsRangeLabel').textContent = `${selectedPeriod} días`;
 
   const cats = activeCategories();
-  $('#statsCatFilters').innerHTML = `<button class="filter ${selectedCategory==='all'?'active':''}" data-st-cat="all">Global</button>` +
+  $('#statsCatFilters').innerHTML = `<button class="filter ${selectedCategory==='all'?'active':''}" data-st-cat="all">Todas</button>` +
     cats.map(c=>`<button class="filter ${selectedCategory===c.id?'active':''}" data-st-cat="${c.id}">${esc(c.name)}</button>`).join('');
   document.querySelectorAll('[data-st-cat]').forEach(b=>b.addEventListener('click',()=>{selectedCategory=b.dataset.stCat; renderStats();}));
 
-  const catName = selectedCategory === 'all' ? 'global' : categoryById(selectedCategory).name;
+  const catName = selectedCategory === 'all' ? 'todas' : categoryById(selectedCategory).name;
   $('#mainChartTitle').textContent = `Calma · ${catName}`;
   $('#mainChart').innerHTML = lineChart(rollingPoints(selectedPeriod, selectedCategory), selectedCategory === 'all' ? 'var(--indigo)' : categoryById(selectedCategory).color, 180);
 
@@ -976,14 +962,7 @@ function renderStats(){
       </div>
       <div class="cat-mini">${lineChart(rollingPoints(selectedPeriod, c.id), c.color, 82, false)}</div>
     </div>`;
-  }).join('') || `<div class="empty">Añade una categoría para ver su gráfica.</div>`;
-}
-function renderHistory(){
-  const data = [...entries].sort((a,b)=>new Date(b.at)-new Date(a.at));
-  $('#historyCount').textContent = data.length ? `${data.length} registro${data.length>1?'s':''}` : '';
-  $('#historyList').innerHTML = data.length ? data.map(entryHTML).join('') :
-    `<div class="empty">Tu historial aparecerá aquí.</div>`;
-  bindEntryClicks($('#historyList'));
+  }).join('') || `<div class="empty">Añade una etiqueta para ver su gráfica.</div>`;
 }
 function entryHTML(e){
   const c = categoryById(e.categoryId);
@@ -1057,7 +1036,7 @@ function openSheet(outcome=null, id=null){
   const e = id ? entries.find(x=>x.id===id) : null;
   draftOutcome = e ? e.outcome : (outcome || 'resisted');
   draftIntensity = e ? +e.intensity : 2;
-  draftCategoryId = e ? e.categoryId : (draftCategoryId || activeCategories()[0].id);
+  draftCategoryId = e ? e.categoryId : (selectedCategory !== 'all' ? selectedCategory : (draftCategoryId || activeCategories()[0].id));
   $('#sheetTitle').textContent = e ? 'Editar registro' : 'Nuevo registro';
   $('#sDelete').style.display = e ? 'block' : 'none';
   $('#sWhen').value = toLocalInput(e ? new Date(e.at) : new Date());
@@ -1131,11 +1110,11 @@ setInterval(()=>{if(themeMode==='auto') applyTheme();},60000);
 function showCategories(){
   closeMenu();
   const m=$('#modal');
-  m.innerHTML = `<h3>Categorías</h3>
-    <p>Añade o quita áreas. Si una categoría ya tiene registros, se oculta en vez de borrar sus datos.</p>
+  m.innerHTML = `<h3>Etiquetas</h3>
+    <p>Añade, modifica o quita etiquetas. Si una etiqueta ya tiene registros, se oculta en vez de borrar sus datos.</p>
     <div id="catModalList"></div>
     <div style="display:flex;gap:8px;margin-top:14px">
-      <input id="newCatName" type="text" placeholder="Nueva categoría">
+      <input id="newCatName" type="text" placeholder="Nueva etiqueta">
       <button class="btn btn-primary" style="flex:none;width:auto;padding:0 14px" id="newCatBtn">Añadir</button>
     </div>
     <div class="link-row"><button onclick="closeModal()">Cerrar</button></div>`;
@@ -1154,7 +1133,7 @@ function renderCatModalList(){
       <button data-save-cat="${c.id}">Guardar</button>
       <button class="danger" data-remove-cat="${c.id}">Quitar</button>
     </div>`).join('');
-  document.querySelectorAll('[data-save-cat]').forEach(b=>b.onclick=()=>{const input=document.querySelector(`[data-cat-name="${b.dataset.saveCat}"]`); updateCategory(b.dataset.saveCat,{name:input.value.trim() || 'Sin nombre'}); renderCatModalList(); toast('Categoría actualizada');});
+  document.querySelectorAll('[data-save-cat]').forEach(b=>b.onclick=()=>{const input=document.querySelector(`[data-cat-name="${b.dataset.saveCat}"]`); updateCategory(b.dataset.saveCat,{name:input.value.trim() || 'Sin nombre'}); renderCatModalList(); toast('Etiqueta actualizada');});
   document.querySelectorAll('[data-remove-cat]').forEach(b=>b.onclick=()=>{removeCategory(b.dataset.removeCat); renderCatModalList();});
 }
 $('#mCats').addEventListener('click',showCategories);
@@ -1229,7 +1208,7 @@ $('#mImport').addEventListener('click',()=>{
 });
 $('#mClear').addEventListener('click',()=>{
   closeMenu();
-  confirmBox('¿Borrar todos los registros?','Se eliminarán las entradas de este dispositivo y de la nube cuando haya conexión. Las categorías se mantienen.','Borrar todo',()=>{
+  confirmBox('¿Borrar todos los registros?','Se eliminarán las entradas de este dispositivo y de la nube cuando haya conexión. Las etiquetas se mantienen.','Borrar todo',()=>{
     const ids=entries.map(e=>e.id);
     entries=[];
     saveLocal(); render();

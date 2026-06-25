@@ -1,14 +1,15 @@
 # Impulsos
 
-App minimalista para registrar impulsos superados o recaídas, organizarlos por categorías y ver estadísticas de progreso.
+App minimalista para registrar impulsos superados o recaídas, organizarlos por etiquetas y ver estadísticas de progreso.
 
 Incluye:
 
-- categorías editables;
+- dos pestañas: Inicio y Estadísticas;
+- etiquetas editables;
 - varios registros por día;
 - intensidad del impulso;
 - índice de calma, tasa de control, recaídas, intensidad media y racha;
-- gráficas globales y por categoría;
+- gráficas globales y por etiqueta;
 - sincronización con Supabase cuando las tablas están configuradas;
 - PWA con soporte offline básico.
 
