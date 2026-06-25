@@ -1,4 +1,4 @@
-const CACHE = 'impulsos-v5';
+const CACHE = 'impulsos-v6';
 const ASSETS = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', e => {

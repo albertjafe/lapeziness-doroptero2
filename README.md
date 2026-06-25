@@ -5,6 +5,7 @@ App minimalista para registrar impulsos superados o recaídas, organizarlos por 
 Incluye:
 
 - dos pestañas: Inicio y Estadísticas;
+- pantalla principal con solo dos acciones: superado o recaída;
 - etiquetas editables;
 - varios registros por día;
 - intensidad del impulso;
