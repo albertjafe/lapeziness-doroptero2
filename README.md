@@ -1,21 +1,28 @@
-# Impulsos
+# Ritmo
 
-App minimalista para registrar impulsos superados o recaídas, organizarlos por etiquetas y ver estadísticas de progreso.
+App minimalista para llevar hábitos sin complicarse.
 
-Incluye:
+## Qué hace
 
-- dos pestañas: Inicio y Estadísticas;
-- pantalla principal con solo dos acciones: superado o recaída;
-- etiquetas editables;
-- varios registros por día;
-- intensidad del impulso;
-- índice de calma, tasa de control, recaídas, intensidad media y racha;
-- gráficas globales y por etiqueta;
-- sincronización con Supabase cuando las tablas están configuradas;
-- PWA con soporte offline básico.
+- Añadir hábitos que quieres hacer.
+- Añadir hábitos que quieres dejar.
+- Marcar cada día los hábitos de hacer.
+- Registrar solo los días de recaída en hábitos de dejar.
+- Usar un objetivo por defecto de 30 días, editable por hábito.
+- Mantener, repetir o archivar un hábito cuando se cumple el objetivo.
+- Ver progreso simple por hábito.
+- Exportar e importar datos.
+- Sincronizar con Supabase cuando las tablas están configuradas.
+- Funcionar como PWA con soporte offline básico.
 
-## Supabase
+## Datos
 
-La app ya está cableada al proyecto de Supabase usado por la app de referencia, pero usa tablas propias para no mezclar datos.
+Ritmo guarda los datos primero en este dispositivo con `localStorage`.
 
-Si aparece `falta configurar`, abre `Sincronización` en el menú de la app, copia el SQL y ejecútalo una vez en el editor SQL de Supabase.
+También está conectado al proyecto de Supabase de la app anterior, usando tablas propias:
+
+- `ritmo_habits`
+- `ritmo_logs`
+- `ritmo_relapses`
+
+Si aparece `falta configurar`, abre `Archivo`, copia el SQL de `Sincronización` y ejecútalo una vez en el editor SQL de Supabase.

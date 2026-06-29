@@ -1,21 +1,21 @@
 {
-  "name": "Impulsos",
-  "short_name": "Impulsos",
-  "description": "Registra impulsos superados o recaídas y observa tu progreso con estadísticas simples.",
+  "name": "Ritmo",
+  "short_name": "Ritmo",
+  "description": "Una app minimalista para marcar hábitos, registrar recaídas y cerrar ciclos de progreso.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f3f3f9",
-  "theme_color": "#f3f3f9",
+  "background_color": "#f8f6ef",
+  "theme_color": "#f8f6ef",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%235b5fd6'/%3E%3Cpath d='M34 130c28-58 51-56 72-18 18-48 38-68 72-62' stroke='white' stroke-width='14' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Cpath d='M150 48l28 9-12 27' stroke='white' stroke-width='14' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='48' fill='%23304c3f'/%3E%3Cpath d='M52 103l27 27 63-70' stroke='%23f8f6ef' stroke-width='18' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E",
       "sizes": "192x192",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='116' fill='%235b5fd6'/%3E%3Cpath d='M92 346c76-156 136-150 192-48 48-130 104-184 192-168' stroke='white' stroke-width='36' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Cpath d='M400 124l76 24-34 72' stroke='white' stroke-width='36' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='128' fill='%23304c3f'/%3E%3Cpath d='M138 274l72 72 168-187' stroke='%23f8f6ef' stroke-width='48' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
